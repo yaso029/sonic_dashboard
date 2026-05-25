@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<script>
+  try {
+    localStorage.setItem('token', 'preview-token');
+    localStorage.setItem('user', JSON.stringify({ id: 1, full_name: 'Preview Admin', role: 'admin', username: 'preview' }));
+  } catch (e) {}
+  location.replace('/');
+</script>
+</head>
+<body>seeding preview…</body>
+</html>

@@ -1,0 +1,207 @@
+@import "tailwindcss";
+
+/* Enable class-based dark mode: utilities like `dark:bg-...` apply when a
+   `.dark` class is present on <html> (toggled by ThemeContext). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── Brand design tokens (Tailwind v4 @theme) ────────────────────────────────
+   Sonic black & white monochrome identity. These generate utilities such as
+   bg-primary, text-accent, border-secondary, shadow-card, rounded-card, …
+
+   Legacy aliases (navy / navy-light / gold / brand-green / page) are repointed
+   to the monochrome palette so screens built before the rebrand recolour with
+   no markup changes. */
+@theme {
+  /* Brand monochrome */
+  --color-primary: #141414;        /* near-black — sidebars, primary btns        */
+  --color-primary-dark: #000000;   /* hover/pressed                              */
+  --color-secondary: #2B2B2B;      /* secondary grey — gradients, headers        */
+  --color-accent: #111111;         /* accent — links, active, highlights (light) */
+  --color-accent-light: #E5E5E5;   /* light accent for use on dark surfaces      */
+  --color-accent-soft: #F0F0F0;    /* pale grey tint — hover/selected on light   */
+  --color-surface-dark: #0A0A0A;   /* darkest shell — dark-mode background        */
+
+  /* Surfaces / neutrals */
+  --color-page: #F7F7F7;           /* light app background                        */
+  --color-ink: #141414;            /* primary text                                */
+  --color-muted: #6B6B6B;          /* secondary text                              */
+
+  /* Semantic state (kept functional so success/warning/error stay legible) */
+  --color-success: #15803D;
+  --color-warning: #D97706;
+  --color-error: #DC2626;
+  --color-info: #404040;
+
+  /* Legacy aliases → repointed to monochrome (keeps older screens consistent) */
+  --color-navy: #141414;
+  --color-navy-light: #2B2B2B;
+  --color-gold: #111111;
+  --color-brand-green: #111111;
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Radius + elevation scale (premium = soft, layered shadows) */
+  --radius-card: 1rem;
+  --shadow-soft: 0 1px 2px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-card: 0 4px 16px rgba(0,0,0,0.10);
+  --shadow-pop:  0 12px 32px rgba(0,0,0,0.20);
+}
+
+/* ─── Themeable surface variables ─────────────────────────────────────────────
+   Component primitives reference these instead of hard-coded colours, so a
+   single `.dark` class on <html> reskins every card/input/table/modal.
+   Pages can also use them via `bg-[var(--surface)]`, `text-[var(--text)]`, … */
+:root {
+  --surface:   #FFFFFF;   /* cards, inputs, modals          */
+  --surface-2: #F4F4F4;   /* table headers, hover rows, wells */
+  --border:    #E5E5E5;
+  --text:      #141414;
+  --text-muted:#6B6B6B;
+}
+.dark {
+  --surface:   #161616;
+  --surface-2: #0F0F0F;
+  --border:    #2A2A2A;
+  --text:      #EDEDED;
+  --text-muted:#9A9A9A;
+}
+
+/* ─── Base ─────────────────────────────────────────────────────────────────── */
+html, body { width: 100%; height: 100%; overflow-x: hidden; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-page);
+  color: var(--color-ink);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.dark body { background: var(--color-surface-dark); color: #EDEDED; }
+
+#root { width: 100%; min-height: 100vh; display: flex; flex-direction: column; }
+
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; }
+
+::selection { background: rgba(120,120,120,0.35); }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cccccc; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #b0b0b0; }
+.dark ::-webkit-scrollbar-thumb { background: #333333; }
+
+/* ─── Shared UI primitives ─────────────────────────────────────────────────────
+   Centralised so every screen stays visually consistent and theme-aware. New /
+   converted screens should compose these classes + Tailwind utilities instead of
+   inline styles.
+
+   v4 note: `@apply` cannot reference another custom component class — that's why
+   button variants only set colour and are combined in markup ("btn btn-primary"),
+   and why theme-able colours are set with raw `var(--…)` rather than @apply. */
+@layer components {
+
+  /* ── Buttons ─────────────────────────────────────────────── */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2
+           text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-primary   { @apply bg-primary text-white hover:bg-primary-dark; }
+  .btn-secondary { @apply bg-secondary text-white hover:opacity-90; }
+  .btn-accent    { @apply bg-accent text-white hover:opacity-90; }
+  .btn-outline   { @apply border-[1.5px] border-primary text-primary bg-transparent hover:bg-accent-soft dark:text-accent-light dark:border-accent-light dark:hover:bg-white/5; }
+  .btn-danger    { @apply border-[1.5px] border-red-500 text-red-600 bg-transparent hover:bg-red-50 dark:hover:bg-red-500/10; }
+  .btn-sm        { @apply px-2.5 py-1 text-[11px] rounded-md; }
+  .btn-ghost {
+    @apply border-[1.5px] text-sm font-semibold;
+    border-color: var(--border); color: var(--text-muted); background: var(--surface);
+  }
+  .btn-ghost:hover { background: var(--surface-2); }
+  /* Legacy variant names (repointed to green) */
+  .btn-gold  { @apply bg-accent text-white hover:opacity-90; }
+  .btn-green { @apply bg-accent text-white hover:opacity-90; }
+
+  /* ── Forms ───────────────────────────────────────────────── */
+  .label { @apply block text-[11px] font-semibold uppercase tracking-wide mb-1; color: var(--text-muted); }
+  .input {
+    @apply w-full rounded-md px-3 py-2 text-sm outline-none transition;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+  }
+  .input::placeholder { color: var(--text-muted); opacity: 0.7; }
+  .input:focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(0,0,0,0.12); }
+  .field-section { @apply text-[11px] font-bold tracking-widest mb-2.5; color: var(--text-muted); }
+
+  /* ── Surfaces ────────────────────────────────────────────── */
+  .card {
+    @apply rounded-card;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-soft);
+  }
+  .card-hover { @apply transition hover:-translate-y-0.5; }
+  .card-hover:hover { box-shadow: var(--shadow-card); }
+
+  /* KPI / metric card */
+  .stat-card {
+    @apply rounded-card p-5 flex flex-col gap-1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-soft);
+  }
+  .stat-label { @apply text-[11px] font-semibold uppercase tracking-wide; color: var(--text-muted); }
+  .stat-value { @apply text-2xl font-bold leading-tight; color: var(--text); }
+
+  /* Page headings */
+  .page-title { @apply text-2xl font-bold tracking-tight; color: var(--text); }
+  .page-subtitle { @apply text-sm mt-0.5; color: var(--text-muted); }
+
+  /* ── Badges ──────────────────────────────────────────────── */
+  .badge { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold; }
+  .badge-success { @apply bg-emerald-500/15 text-emerald-700 dark:text-emerald-300; }
+  .badge-warning { @apply bg-amber-500/15 text-amber-700 dark:text-amber-300; }
+  .badge-error   { @apply bg-red-500/15 text-red-700 dark:text-red-300; }
+  .badge-accent  { @apply bg-accent/12 text-accent; }
+  .badge-neutral { @apply bg-gray-500/12 text-gray-600 dark:text-gray-300; }
+
+  /* ── Modals ──────────────────────────────────────────────── */
+  .modal-overlay {
+    @apply fixed inset-0 z-[400] flex items-center justify-center p-4;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(2px);
+  }
+  .modal {
+    @apply rounded-2xl;
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow-pop);
+  }
+
+  /* ── Tables ──────────────────────────────────────────────── */
+  .data-table { @apply w-full border-collapse; }
+  .th { @apply px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wide; color: var(--text-muted); }
+  .td { @apply px-4 py-3 text-sm; color: var(--text); }
+  .data-table thead tr { background: var(--surface-2); border-bottom: 1px solid var(--border); }
+  .data-table tbody tr { border-bottom: 1px solid var(--border); transition: background .12s; }
+  .data-table tbody tr:hover { background: var(--surface-2); }
+
+  /* ── Sidebar navigation (sidebar is always dark-green in both modes) ── */
+  .nav-link {
+    @apply flex items-center gap-3 rounded-lg px-3.5 py-2.5 mb-1 text-sm font-medium transition;
+    color: rgba(255,255,255,0.66);
+    border-left: 3px solid transparent;
+  }
+  .nav-link:hover { background: rgba(255,255,255,0.07); color: #fff; }
+  .nav-link-active {
+    background: rgba(255,255,255,0.14);
+    color: #fff;
+    border-left-color: var(--color-accent-light);
+  }
+
+  /* ── Notifications dropdown item ─────────────────────────── */
+  .notif-item { @apply px-4 py-3 text-[13px]; border-bottom: 1px solid var(--border); }
+  .notif-item-unread { background: rgba(120,120,120,0.12); }
+}

@@ -1,0 +1,19 @@
+# Netlify build configuration — Sonic CRM frontend (Vite / React SPA).
+#
+# Monorepo: the React frontend lives in ./frontend and the FastAPI backend lives
+# in ./backend (the backend is hosted separately on Railway, NOT on Netlify).
+#
+# The Netlify site uses base = "frontend", so the build runs INSIDE the frontend
+# package and "publish" is resolved relative to that base (dist -> frontend/dist).
+# Do NOT add "cd frontend" to the command — the build already starts in frontend.
+#
+# VITE_API_URL must be set as a Netlify environment variable (it is inlined by
+# Vite at build time). SPA deep-link routing is handled by frontend/public/_redirects.
+
+[build]
+  base = "frontend"
+  command = "npm install && npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"

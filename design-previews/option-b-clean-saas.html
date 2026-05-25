@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Option B — Clean SaaS</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    background: #f4f6f9;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  /* Top nav */
+  .topbar {
+    background: #0A2342;
+    height: 64px;
+    display: flex; align-items: center;
+    padding: 0 40px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .topbar-logo {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .topbar-icon {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, #C9A84C, #e8c96a);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 900; color: #0A2342;
+  }
+  .topbar-name { font-size: 18px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+  .topbar-tag {
+    margin-left: 10px;
+    background: rgba(201,168,76,0.2);
+    border: 1px solid rgba(201,168,76,0.4);
+    color: #C9A84C;
+    font-size: 9px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 2px 8px; border-radius: 20px;
+  }
+  .topbar-right {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 20px;
+  }
+  .topbar-user { font-size: 13px; color: rgba(255,255,255,0.7); }
+  .topbar-user span { color: #fff; font-weight: 600; }
+  .topbar-signout {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.7); font-size: 12px; padding: 6px 14px;
+    border-radius: 6px; cursor: pointer;
+  }
+
+  /* Hero section */
+  .hero {
+    padding: 52px 40px 0;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .hero-date {
+    font-size: 12px; color: #aaa; font-weight: 500; margin-bottom: 6px;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .hero-greeting { font-size: 32px; font-weight: 900; color: #0d1f3c; letter-spacing: -1px; }
+  .hero-sub { font-size: 15px; color: #888; margin-top: 6px; }
+
+  /* Divider */
+  .section-label {
+    max-width: 1100px; margin: 40px auto 20px;
+    padding: 0 40px;
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: #aaa;
+  }
+
+  /* Grid */
+  .grid {
+    max-width: 1100px; margin: 0 auto;
+    padding: 0 40px 60px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px 26px;
+    cursor: pointer;
+    border: 1.5px solid #edf0f4;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--accent);
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+    border-color: transparent;
+  }
+  .card.coming {
+    background: #fafbfc;
+    border-style: dashed;
+    opacity: 0.65;
+    cursor: default;
+  }
+  .card.coming:hover { transform: none; box-shadow: none; }
+  .card.coming::before { opacity: 0.4; }
+
+  .badge {
+    position: absolute; top: 18px; right: 18px;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 9px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+  }
+  .badge.restricted { background: #fef3c7; color: #92400e; }
+  .badge.soon { background: #f1f5f9; color: #94a3b8; }
+
+  .card-icon-wrap {
+    width: 52px; height: 52px;
+    background: var(--accent-bg);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    margin-bottom: 18px;
+  }
+  .card-title { font-size: 18px; font-weight: 800; color: #0d1f3c; margin-bottom: 3px; }
+  .card-sub {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--accent); margin-bottom: 12px;
+  }
+  .card-desc { font-size: 13px; color: #788; line-height: 1.6; margin-bottom: 22px; color: #667; }
+  .card-action {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-btn {
+    font-size: 13px; font-weight: 700; color: var(--accent);
+  }
+  .card.coming .card-btn { color: #bbb; }
+  .card-arrow {
+    width: 32px; height: 32px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 16px;
+  }
+  .card.coming .card-arrow { background: #e2e8f0; }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="topbar-logo">
+    <div class="topbar-icon">P</div>
+    <div class="topbar-name">Sonic System</div>
+    <div class="topbar-tag">Real Estate</div>
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-user">Logged in as <span>Yaso</span></div>
+    <button class="topbar-signout">Sign out</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-date">Thursday, 1 May 2026</div>
+  <div class="hero-greeting">Good evening, Yaso 👋</div>
+  <div class="hero-sub">Choose a module to get started</div>
+</div>
+
+<div class="section-label">Active Modules</div>
+
+<div class="grid">
+
+  <div class="card" style="--accent: #0A2342; --accent-bg: #eef2f7;">
+    <div class="card-icon-wrap">📋</div>
+    <div class="card-title">CRM</div>
+    <div class="card-sub">Leads & Pipeline</div>
+    <div class="card-desc">Manage real estate leads, track your pipeline, assign brokers and monitor team performance.</div>
+    <div class="card-action">
+      <div class="card-btn">Open CRM</div>
+      <div class="card-arrow">→</div>
+    </div>
+  </div>
+
+  <div class="card" style="--accent: #7c3aed; --accent-bg: #f3f0ff;">
+    <span class="badge restricted">🔒 Admin Only</span>
+    <div class="card-icon-wrap">🤝</div>
+    <div class="card-title">Partnerships</div>
+    <div class="card-sub">Referral Partner Outreach</div>
+    <div class="card-desc">Manage referral partners, send WhatsApp & Email campaigns and track commissions.</div>
+    <div class="card-action">
+      <div class="card-btn">Open Partnerships</div>
+      <div class="card-arrow" style="background:#7c3aed;">→</div>
+    </div>
+  </div>
+
+  <div class="card" style="--accent: #dc2626; --accent-bg: #fef2f2;">
+    <div class="card-icon-wrap">📊</div>
+    <div class="card-title">Agents Dashboard</div>
+    <div class="card-sub">Property Vault & Resources</div>
+    <div class="card-desc">Browse listings, promotions, developer events and training videos for the team.</div>
+    <div class="card-action">
+      <div class="card-btn">Open Dashboard</div>
+      <div class="card-arrow" style="background:#dc2626;">→</div>
+    </div>
+  </div>
+
+  <div class="card coming" style="--accent: #0891b2; --accent-bg: #e0f2fe;">
+    <span class="badge soon">Coming Soon</span>
+    <div class="card-icon-wrap">👥</div>
+    <div class="card-title">HR</div>
+    <div class="card-sub">Human Resources</div>
+    <div class="card-desc">Employee records, attendance, leave requests and HR workflows.</div>
+    <div class="card-action">
+      <div class="card-btn">Coming Soon</div>
+      <div class="card-arrow">→</div>
+    </div>
+  </div>
+
+  <div class="card coming" style="--accent: #059669; --accent-bg: #ecfdf5;">
+    <span class="badge soon">Coming Soon</span>
+    <div class="card-icon-wrap">💰</div>
+    <div class="card-title">Accounting</div>
+    <div class="card-sub">Finance & Reports</div>
+    <div class="card-desc">Track invoices, expenses, commissions and generate financial reports.</div>
+    <div class="card-action">
+      <div class="card-btn">Coming Soon</div>
+      <div class="card-arrow">→</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

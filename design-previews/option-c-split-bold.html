@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Option C — Split Bold</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    background: #0b0f1a;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    display: flex;
+  }
+
+  /* Left panel */
+  .left {
+    width: 320px;
+    flex-shrink: 0;
+    background: linear-gradient(170deg, #0d1728 0%, #091322 100%);
+    border-right: 1px solid rgba(255,255,255,0.06);
+    display: flex; flex-direction: column;
+    padding: 48px 36px;
+    position: sticky; top: 0; height: 100vh;
+  }
+  .left-logo {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 8px;
+  }
+  .logo-mark {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, #C9A84C 0%, #f0d98a 100%);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 900; color: #0d1728;
+    box-shadow: 0 4px 20px rgba(201,168,76,0.35);
+  }
+  .logo-word { font-size: 22px; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
+  .logo-tag {
+    font-size: 9px; letter-spacing: 3px; color: #C9A84C;
+    text-transform: uppercase; margin-bottom: 48px; margin-left: 56px;
+  }
+
+  .divider { width: 32px; height: 2px; background: rgba(201,168,76,0.4); border-radius: 2px; margin-bottom: 32px; }
+
+  .welcome-label { font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+  .welcome-name { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 6px; }
+  .welcome-role {
+    display: inline-block;
+    background: rgba(201,168,76,0.15); border: 1px solid rgba(201,168,76,0.3);
+    color: #C9A84C; font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; padding: 3px 10px; border-radius: 20px;
+    margin-bottom: 40px;
+  }
+
+  .stats { margin-bottom: 48px; }
+  .stat { margin-bottom: 20px; }
+  .stat-label { font-size: 11px; color: rgba(255,255,255,0.35); margin-bottom: 4px; letter-spacing: 0.5px; }
+  .stat-value { font-size: 22px; font-weight: 800; color: #fff; }
+  .stat-bar { height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+  .stat-fill { height: 100%; border-radius: 2px; }
+
+  .left-footer { margin-top: auto; }
+  .sign-out-btn {
+    width: 100%;
+    padding: 11px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: rgba(255,255,255,0.45);
+    font-size: 13px; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sign-out-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); }
+
+  /* Right panel */
+  .right {
+    flex: 1;
+    padding: 48px 44px;
+    overflow-y: auto;
+  }
+  .right-header {
+    margin-bottom: 36px;
+  }
+  .right-title { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.35); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+  .right-sub { font-size: 26px; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
+
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .mod-card {
+    border-radius: 18px;
+    padding: 28px 26px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    min-height: 200px;
+    display: flex; flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background: var(--bg);
+  }
+  .mod-card::before {
+    content: '';
+    position: absolute;
+    bottom: -20px; right: -20px;
+    width: 140px; height: 140px;
+    background: rgba(0,0,0,0.15);
+    border-radius: 50%;
+  }
+  .mod-card:hover { transform: translateY(-5px); box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
+  .mod-card.coming { opacity: 0.45; cursor: default; filter: grayscale(0.3); }
+  .mod-card.coming:hover { transform: none; box-shadow: none; }
+
+  .mod-badge {
+    position: absolute; top: 18px; right: 18px;
+    padding: 4px 10px; border-radius: 20px;
+    font-size: 9px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+    background: rgba(0,0,0,0.2); color: rgba(255,255,255,0.7);
+  }
+
+  .mod-icon { font-size: 38px; margin-bottom: 16px; }
+  .mod-title { font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 3px; letter-spacing: -0.3px; }
+  .mod-sub { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; }
+  .mod-desc { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.6; margin-bottom: 20px; flex: 1; }
+  .mod-open {
+    align-self: flex-start;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    font-size: 12px; font-weight: 800;
+    padding: 8px 16px; border-radius: 8px;
+    letter-spacing: 0.3px;
+    backdrop-filter: blur(4px);
+  }
+  .mod-card.coming .mod-open { opacity: 0.5; }
+</style>
+</head>
+<body>
+
+<!-- LEFT PANEL -->
+<aside class="left">
+  <div class="left-logo">
+    <div class="logo-mark">P</div>
+    <div class="logo-word">Sonic System</div>
+  </div>
+  <div class="logo-tag">Real Estate Platform</div>
+
+  <div class="divider"></div>
+
+  <div class="welcome-label">Logged in as</div>
+  <div class="welcome-name">Yaso</div>
+  <div class="welcome-role">Administrator</div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">Active Leads</div>
+      <div class="stat-value">142</div>
+      <div class="stat-bar"><div class="stat-fill" style="width:72%;background:linear-gradient(90deg,#4f8ef7,#818cf8);"></div></div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Referral Partners</div>
+      <div class="stat-value">38</div>
+      <div class="stat-bar"><div class="stat-fill" style="width:55%;background:linear-gradient(90deg,#a78bfa,#c4b5fd);"></div></div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Properties Listed</div>
+      <div class="stat-value">24</div>
+      <div class="stat-bar"><div class="stat-fill" style="width:40%;background:linear-gradient(90deg,#f87171,#fb923c);"></div></div>
+    </div>
+  </div>
+
+  <div class="left-footer">
+    <button class="sign-out-btn">← Sign out</button>
+  </div>
+</aside>
+
+<!-- RIGHT PANEL -->
+<main class="right">
+  <div class="right-header">
+    <div class="right-title">Operations Hub</div>
+    <div class="right-sub">Select a module</div>
+  </div>
+
+  <div class="modules-grid">
+
+    <div class="mod-card" style="--bg: linear-gradient(135deg, #1e3a5f 0%, #0d2340 100%);">
+      <div class="mod-icon">📋</div>
+      <div class="mod-title">CRM</div>
+      <div class="mod-sub">Leads & Pipeline</div>
+      <div class="mod-desc">Manage real estate leads, track pipeline stages, assign brokers and monitor your team's performance.</div>
+      <div class="mod-open">Open CRM →</div>
+    </div>
+
+    <div class="mod-card" style="--bg: linear-gradient(135deg, #3b1f6b 0%, #2d1660 100%);">
+      <div class="mod-badge">🔒 Admin</div>
+      <div class="mod-icon">🤝</div>
+      <div class="mod-title">Partnerships</div>
+      <div class="mod-sub">Referral Outreach</div>
+      <div class="mod-desc">Manage referral partners, run WhatsApp & email campaigns and track commission payouts.</div>
+      <div class="mod-open">Open →</div>
+    </div>
+
+    <div class="mod-card" style="--bg: linear-gradient(135deg, #7f1d1d 0%, #6b1313 100%);">
+      <div class="mod-icon">📊</div>
+      <div class="mod-title">Agents Dashboard</div>
+      <div class="mod-sub">Property & Resources</div>
+      <div class="mod-desc">Browse the property vault, view promotions, developer events and team training videos.</div>
+      <div class="mod-open">Open →</div>
+    </div>
+
+    <div class="mod-card coming" style="--bg: linear-gradient(135deg, #1c3a3a 0%, #142e2e 100%);">
+      <div class="mod-badge">Coming Soon</div>
+      <div class="mod-icon">👥</div>
+      <div class="mod-title">HR</div>
+      <div class="mod-sub">Human Resources</div>
+      <div class="mod-desc">Employee records, attendance tracking, leave requests and HR workflows.</div>
+      <div class="mod-open">Coming Soon</div>
+    </div>
+
+    <div class="mod-card coming" style="--bg: linear-gradient(135deg, #1a3a1a 0%, #112811 100%);">
+      <div class="mod-badge">Coming Soon</div>
+      <div class="mod-icon">💰</div>
+      <div class="mod-title">Accounting</div>
+      <div class="mod-sub">Finance & Reports</div>
+      <div class="mod-desc">Invoices, expenses, commissions and detailed financial reports.</div>
+      <div class="mod-open">Coming Soon</div>
+    </div>
+
+  </div>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sonic E-Card — White Professional Variations</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #e8edf2; font-family: 'Segoe UI', system-ui, sans-serif; padding: 50px 24px; }
+  h1 { color: #0A2342; text-align: center; font-size: 20px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .subtitle { color: #888; text-align: center; font-size: 13px; margin-bottom: 56px; }
+  .section { margin-bottom: 80px; }
+  .option-label {
+    text-align: center; margin-bottom: 28px;
+    font-size: 11px; font-weight: 800; letter-spacing: 2.5px;
+    text-transform: uppercase; color: #aaa;
+  }
+  .option-label span { color: #0A2342; }
+  .cards-row { display: flex; justify-content: center; gap: 0; flex-wrap: wrap; }
+  .card { width: 360px; border-radius: 20px; overflow: hidden; position: relative; background: #fff; }
+
+  /* ── SVG ICONS (elegant line icons) ── */
+  .ico { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  /* ── QR placeholder ── */
+  .qr {
+    width: 72px; height: 72px; flex-shrink: 0;
+    background: #fff; border-radius: 8px; padding: 6px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .qr svg { width: 100%; height: 100%; }
+
+  /* ── Logo P mark ── */
+  .p-mark {
+    width: 38px; height: 38px; border-radius: 9px; flex-shrink: 0;
+    background: linear-gradient(135deg, #C9A84C, #f0d98a);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 900; color: #0A2342;
+  }
+  .p-mark-sm {
+    width: 30px; height: 30px; border-radius: 7px; flex-shrink: 0;
+    background: linear-gradient(135deg, #C9A84C, #f0d98a);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 900; color: #0A2342;
+  }
+
+  /* ══════════════════════════════════
+     VARIANT A — Banner + Floating Avatar
+  ══════════════════════════════════ */
+  .a-banner {
+    height: 110px;
+    background: linear-gradient(130deg, #0A2342 0%, #1a3a5f 60%, #0f2a4a 100%);
+    position: relative; overflow: hidden;
+  }
+  .a-banner::before {
+    content: '';
+    position: absolute; top: -30px; right: -30px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.12);
+  }
+  .a-banner::after {
+    content: '';
+    position: absolute; bottom: -20px; left: 60px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .a-logo-row {
+    position: absolute; top: 20px; left: 24px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .a-company { font-size: 13px; font-weight: 800; color: #fff; letter-spacing: -0.2px; }
+  .a-tagline { font-size: 8.5px; letter-spacing: 2px; color: rgba(201,168,76,0.85); text-transform: uppercase; margin-top: 1px; }
+  .a-gold-line {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #C9A84C 30%, #f0d98a 50%, #C9A84C 70%, transparent);
+  }
+  .a-avatar-wrap {
+    position: absolute; bottom: -38px; left: 24px;
+  }
+  .a-avatar {
+    width: 76px; height: 76px; border-radius: 50%;
+    background: linear-gradient(135deg, #0A2342, #1e3a5f);
+    border: 3px solid #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 900; color: #C9A84C;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+  }
+  .a-body { padding: 50px 24px 22px; }
+  .a-name { font-size: 21px; font-weight: 900; color: #0A2342; letter-spacing: -0.5px; }
+  .a-title {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.8px;
+    text-transform: uppercase; color: #C9A84C; margin-top: 5px; margin-bottom: 20px;
+  }
+  .a-divider { height: 1px; background: #f0f0f0; margin-bottom: 18px; }
+  .a-info { display: flex; flex-direction: column; gap: 13px; margin-bottom: 22px; }
+  .a-info-row { display: flex; align-items: center; gap: 12px; }
+  .a-icon-wrap {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: #f4f6fb; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .a-info-text { font-size: 13px; color: #333; font-weight: 500; }
+  .a-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px; background: #f8f9fc;
+    border-top: 1px solid #f0f0f0;
+  }
+  .a-btns { display: flex; gap: 8px; }
+  .a-btn {
+    padding: 9px 16px; border-radius: 9px; border: none;
+    font-size: 12px; font-weight: 700; cursor: pointer; letter-spacing: 0.2px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .a-btn-save { background: #0A2342; color: #fff; }
+  .a-btn-share { background: #fff; color: #0A2342; border: 1.5px solid #e0e4ec !important; }
+
+  /* ══════════════════════════════════
+     VARIANT B — Left Accent + Minimal
+  ══════════════════════════════════ */
+  .b-card {
+    display: flex; min-height: 440px;
+  }
+  .b-left {
+    width: 6px; flex-shrink: 0;
+    background: linear-gradient(180deg, #C9A84C 0%, #0A2342 100%);
+  }
+  .b-inner { flex: 1; padding: 32px 26px; display: flex; flex-direction: column; }
+  .b-logo-row { display: flex; align-items: center; gap: 9px; margin-bottom: 28px; }
+  .b-company { font-size: 12px; font-weight: 800; color: #0A2342; letter-spacing: 0.3px; }
+  .b-tagline { font-size: 8px; letter-spacing: 2px; color: #C9A84C; text-transform: uppercase; margin-top: 1px; }
+  .b-avatar {
+    width: 68px; height: 68px; border-radius: 14px;
+    background: linear-gradient(135deg, #0A234215, #0A234230);
+    border: 1.5px solid #e8ecf2;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 900; color: #0A2342;
+    margin-bottom: 14px;
+  }
+  .b-name { font-size: 20px; font-weight: 900; color: #0A2342; letter-spacing: -0.5px; }
+  .b-title {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.8px;
+    text-transform: uppercase; color: #C9A84C; margin-top: 4px; margin-bottom: 22px;
+  }
+  .b-info { flex: 1; display: flex; flex-direction: column; gap: 13px; }
+  .b-info-row { display: flex; align-items: center; gap: 12px; }
+  .b-icon-wrap {
+    width: 32px; height: 32px; border-radius: 8px;
+    border: 1.5px solid #eaecf0;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .b-info-text { font-size: 13px; color: #444; font-weight: 500; }
+  .b-divider { height: 1px; background: #f2f2f2; margin: 20px 0; }
+  .b-bottom { display: flex; align-items: center; justify-content: space-between; }
+  .b-btns { display: flex; flex-direction: column; gap: 8px; }
+  .b-btn {
+    padding: 9px 18px; border-radius: 9px; border: none;
+    font-size: 12px; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .b-btn-save { background: #0A2342; color: #fff; }
+  .b-btn-share { background: #f4f6fb; color: #0A2342; }
+
+  /* ══════════════════════════════════
+     VARIANT C — Top Wave + Split Footer
+  ══════════════════════════════════ */
+  .c-top {
+    background: #0A2342;
+    padding: 24px 26px 0;
+    position: relative;
+  }
+  .c-wave {
+    display: block; width: 100%;
+    margin-bottom: -1px;
+  }
+  .c-logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+  .c-company { font-size: 13px; font-weight: 800; color: #fff; }
+  .c-tagline { font-size: 8.5px; letter-spacing: 2px; color: rgba(201,168,76,0.9); text-transform: uppercase; margin-top: 1px; }
+  .c-profile-row { display: flex; align-items: flex-end; gap: 16px; padding-bottom: 0; }
+  .c-avatar {
+    width: 76px; height: 76px; border-radius: 50%;
+    background: linear-gradient(135deg, rgba(201,168,76,0.25), rgba(201,168,76,0.1));
+    border: 2.5px solid rgba(201,168,76,0.6);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; font-weight: 900; color: #C9A84C;
+    flex-shrink: 0;
+  }
+  .c-name-wrap { padding-bottom: 10px; }
+  .c-name { font-size: 20px; font-weight: 900; color: #fff; letter-spacing: -0.4px; }
+  .c-title { font-size: 10px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: #C9A84C; margin-top: 4px; }
+  .c-body { padding: 22px 26px; }
+  .c-info { display: flex; flex-direction: column; gap: 13px; margin-bottom: 22px; }
+  .c-info-row { display: flex; align-items: center; gap: 12px; }
+  .c-icon-wrap {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: #f4f6fb; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .c-info-text { font-size: 13px; color: #333; font-weight: 500; }
+  .c-footer {
+    display: grid; grid-template-columns: 1fr 1fr;
+    border-top: 1px solid #f0f0f0;
+  }
+  .c-footer-btn {
+    padding: 14px; border: none; cursor: pointer;
+    font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    background: #fff; color: #0A2342;
+    transition: background 0.15s;
+  }
+  .c-footer-btn:first-child { border-right: 1px solid #f0f0f0; }
+  .c-footer-btn.primary { background: #0A2342; color: #fff; }
+  .c-footer-qr {
+    padding: 16px 26px; background: #f8f9fc;
+    border-top: 1px solid #f0f0f0;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .c-url { font-size: 10px; color: #bbb; }
+
+  /* ══════════════════════════════════
+     VARIANT D — Horizontal Split
+  ══════════════════════════════════ */
+  .d-card {
+    display: flex; min-height: 420px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+  .d-left {
+    width: 140px; flex-shrink: 0;
+    background: linear-gradient(160deg, #0A2342 0%, #0f2a4a 100%);
+    display: flex; flex-direction: column;
+    align-items: center; padding: 28px 16px;
+    position: relative; overflow: hidden;
+  }
+  .d-left::before {
+    content: '';
+    position: absolute; bottom: -40px; right: -40px;
+    width: 120px; height: 120px; border-radius: 50%;
+    background: rgba(201,168,76,0.1);
+  }
+  .d-avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: rgba(201,168,76,0.15);
+    border: 2px solid rgba(201,168,76,0.5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 900; color: #C9A84C;
+    margin-bottom: 14px;
+  }
+  .d-role-badge {
+    background: rgba(201,168,76,0.15);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 20px; padding: 3px 10px;
+    font-size: 8.5px; font-weight: 800; color: #C9A84C;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .d-qr-wrap {
+    margin-top: auto;
+    background: #fff; border-radius: 8px; padding: 5px;
+    width: 70px; height: 70px; display: flex; align-items: center; justify-content: center;
+  }
+  .d-right { flex: 1; display: flex; flex-direction: column; }
+  .d-right-top { padding: 26px 22px 18px; border-bottom: 1px solid #f2f2f2; }
+  .d-logo-row { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; }
+  .d-company { font-size: 11px; font-weight: 800; color: #0A2342; letter-spacing: 0.2px; }
+  .d-tagline { font-size: 8px; letter-spacing: 2px; color: #C9A84C; text-transform: uppercase; }
+  .d-gold-bar { height: 2px; width: 32px; background: linear-gradient(90deg, #C9A84C, #f0d98a); border-radius: 1px; margin: 4px 0 14px; }
+  .d-name { font-size: 18px; font-weight: 900; color: #0A2342; letter-spacing: -0.4px; }
+  .d-title { font-size: 9.5px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: #C9A84C; margin-top: 4px; }
+  .d-info { flex: 1; padding: 16px 22px; display: flex; flex-direction: column; gap: 11px; }
+  .d-info-row { display: flex; align-items: center; gap: 10px; }
+  .d-icon-wrap {
+    width: 30px; height: 30px; border-radius: 7px;
+    background: #f4f6fb; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .d-info-text { font-size: 12px; color: #444; font-weight: 500; }
+  .d-right-footer {
+    padding: 14px 22px; background: #f8f9fc;
+    border-top: 1px solid #f0f0f0;
+    display: flex; gap: 8px;
+  }
+  .d-btn {
+    flex: 1; padding: 9px 8px; border-radius: 8px; border: none;
+    font-size: 11px; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .d-btn-save { background: #0A2342; color: #fff; }
+  .d-btn-share { background: #fff; color: #0A2342; border: 1.5px solid #e0e4ec !important; }
+
+  /* ── Cards container ── */
+  .card-shadow { box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+</style>
+</head>
+<body>
+
+<h1>Sonic Real Estate — E-Card Variations</h1>
+<p class="subtitle">Clean professional style · 4 new options</p>
+
+<!-- SVG ICON DEFINITIONS (reusable) -->
+<svg style="display:none">
+  <symbol id="ico-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.09 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .99h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+  </symbol>
+  <symbol id="ico-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+    <polyline points="22,6 12,13 2,6"/>
+  </symbol>
+  <symbol id="ico-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="2" y1="12" x2="22" y2="12"/>
+    <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+  </symbol>
+  <symbol id="ico-whatsapp" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </symbol>
+  <symbol id="ico-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+  </symbol>
+  <symbol id="ico-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+  </symbol>
+</svg>
+
+<!-- QR CODE SVG (simplified visual) -->
+<svg id="qr-template" style="display:none" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top-left finder -->
+  <rect x="5" y="5" width="30" height="30" rx="4" fill="#0A2342"/>
+  <rect x="10" y="10" width="20" height="20" rx="2" fill="#fff"/>
+  <rect x="14" y="14" width="12" height="12" rx="1" fill="#0A2342"/>
+  <!-- Top-right finder -->
+  <rect x="65" y="5" width="30" height="30" rx="4" fill="#0A2342"/>
+  <rect x="70" y="10" width="20" height="20" rx="2" fill="#fff"/>
+  <rect x="74" y="14" width="12" height="12" rx="1" fill="#0A2342"/>
+  <!-- Bottom-left finder -->
+  <rect x="5" y="65" width="30" height="30" rx="4" fill="#0A2342"/>
+  <rect x="10" y="70" width="20" height="20" rx="2" fill="#fff"/>
+  <rect x="14" y="74" width="12" height="12" rx="1" fill="#0A2342"/>
+  <!-- Data dots -->
+  <rect x="42" y="5" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="50" y="5" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="42" y="13" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="58" y="5" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="5" y="42" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="5" y="50" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="13" y="42" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="42" y="42" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="50" y="50" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="42" y="58" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="58" y="42" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="66" y="50" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="58" y="58" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="66" y="58" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="74" y="42" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="82" y="50" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="90" y="42" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="42" y="74" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="50" y="66" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="50" y="82" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="58" y="74" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="66" y="66" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="74" y="58" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="82" y="66" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="90" y="58" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="21" y="42" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="29" y="50" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="13" y="58" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="29" y="58" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="58" y="90" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="74" y="82" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="82" y="90" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="90" y="74" width="5" height="5" rx="1" fill="#0A2342"/>
+  <rect x="90" y="82" width="5" height="5" rx="1" fill="#0A2342"/>
+</svg>
+
+<!-- ══ VARIANT A ══ -->
+<div class="section">
+  <div class="option-label"><span>Option A</span> — Banner with Floating Avatar</div>
+  <div class="cards-row">
+    <div class="card card-shadow">
+      <div class="a-banner">
+        <div class="a-logo-row">
+          <div class="p-mark">P</div>
+          <div>
+            <div class="a-company">Sonic Real Estate</div>
+            <div class="a-tagline">Dubai · UAE</div>
+          </div>
+        </div>
+        <div class="a-avatar-wrap">
+          <div class="a-avatar">Y</div>
+        </div>
+        <div class="a-gold-line"></div>
+      </div>
+      <div class="a-body">
+        <div class="a-name">Yassin Ammary</div>
+        <div class="a-title">Senior Real Estate Broker</div>
+        <div class="a-divider"></div>
+        <div class="a-info">
+          <div class="a-info-row">
+            <div class="a-icon-wrap">
+              <svg width="16" height="16" style="color:#0A2342"><use href="#ico-phone"/></svg>
+            </div>
+            <span class="a-info-text">+971 50 123 4567</span>
+          </div>
+          <div class="a-info-row">
+            <div class="a-icon-wrap">
+              <svg width="16" height="16" style="color:#0A2342"><use href="#ico-mail"/></svg>
+            </div>
+            <span class="a-info-text">yassin@sonic.ae</span>
+          </div>
+          <div class="a-info-row">
+            <div class="a-icon-wrap">
+              <svg width="16" height="16" style="color:#25D366"><use href="#ico-whatsapp"/></svg>
+            </div>
+            <span class="a-info-text">+971 50 123 4567</span>
+          </div>
+          <div class="a-info-row">
+            <div class="a-icon-wrap">
+              <svg width="16" height="16" style="color:#0A2342"><use href="#ico-globe"/></svg>
+            </div>
+            <span class="a-info-text">sonic.ae</span>
+          </div>
+        </div>
+      </div>
+      <div class="a-footer">
+        <div class="a-btns">
+          <button class="a-btn a-btn-save">
+            <svg width="13" height="13"><use href="#ico-save"/></svg> Save Contact
+          </button>
+          <button class="a-btn a-btn-share">
+            <svg width="13" height="13"><use href="#ico-share"/></svg> Share
+          </button>
+        </div>
+        <div class="qr" style="border:1px solid #f0f0f0;">
+          <svg viewBox="0 0 100 100"><use href="#qr-template" x="0" y="0" width="100" height="100"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VARIANT B ══ -->
+<div class="section">
+  <div class="option-label"><span>Option B</span> — Left Gold Accent · Minimal</div>
+  <div class="cards-row">
+    <div class="card card-shadow b-card">
+      <div class="b-left"></div>
+      <div class="b-inner">
+        <div class="b-logo-row">
+          <div class="p-mark-sm">P</div>
+          <div>
+            <div class="b-company">Sonic Real Estate</div>
+            <div class="b-tagline">Dubai · UAE</div>
+          </div>
+        </div>
+        <div class="b-avatar">Y</div>
+        <div class="b-name">Yassin Ammary</div>
+        <div class="b-title">Senior Real Estate Broker</div>
+        <div class="b-info">
+          <div class="b-info-row">
+            <div class="b-icon-wrap">
+              <svg width="15" height="15" style="color:#0A2342"><use href="#ico-phone"/></svg>
+            </div>
+            <span class="b-info-text">+971 50 123 4567</span>
+          </div>
+          <div class="b-info-row">
+            <div class="b-icon-wrap">
+              <svg width="15" height="15" style="color:#0A2342"><use href="#ico-mail"/></svg>
+            </div>
+            <span class="b-info-text">yassin@sonic.ae</span>
+          </div>
+          <div class="b-info-row">
+            <div class="b-icon-wrap">
+              <svg width="15" height="15" style="color:#25D366"><use href="#ico-whatsapp"/></svg>
+            </div>
+            <span class="b-info-text">+971 50 123 4567</span>
+          </div>
+          <div class="b-info-row">
+            <div class="b-icon-wrap">
+              <svg width="15" height="15" style="color:#0A2342"><use href="#ico-globe"/></svg>
+            </div>
+            <span class="b-info-text">sonic.ae</span>
+          </div>
+        </div>
+        <div class="b-divider"></div>
+        <div class="b-bottom">
+          <div class="b-btns">
+            <button class="b-btn b-btn-save">
+              <svg width="13" height="13"><use href="#ico-save"/></svg> Save Contact
+            </button>
+            <button class="b-btn b-btn-share">
+              <svg width="13" height="13"><use href="#ico-share"/></svg> Share Card
+            </button>
+          </div>
+          <div class="qr" style="border:1px solid #f0f0f0;">
+            <svg viewBox="0 0 100 100"><use href="#qr-template" x="0" y="0" width="100" height="100"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VARIANT C ══ -->
+<div class="section">
+  <div class="option-label"><span>Option C</span> — Navy Wave Header</div>
+  <div class="cards-row">
+    <div class="card card-shadow">
+      <div class="c-top">
+        <div class="c-logo-row">
+          <div class="p-mark">P</div>
+          <div>
+            <div class="c-company">Sonic Real Estate</div>
+            <div class="c-tagline">Dubai · UAE</div>
+          </div>
+        </div>
+        <div class="c-profile-row">
+          <div class="c-avatar">Y</div>
+          <div class="c-name-wrap">
+            <div class="c-name">Yassin Ammary</div>
+            <div class="c-title">Senior Real Estate Broker</div>
+          </div>
+        </div>
+        <!-- Wave SVG -->
+        <svg class="c-wave" viewBox="0 0 360 40" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <path d="M0 0 Q90 40 180 20 Q270 0 360 30 L360 40 L0 40 Z" fill="#fff"/>
+        </svg>
+      </div>
+      <div class="c-body">
+        <div class="c-info">
+          <div class="c-info-row">
+            <div class="c-icon-wrap">
+              <svg width="16" height="16" style="color:#0A2342"><use href="#ico-phone"/></svg>
+            </div>
+            <span class="c-info-text">+971 50 123 4567</span>
+          </div>
+          <div class="c-info-row">
+            <div class="c-icon-wrap">
+              <svg width="16" height="16" style="color:#0A2342"><use href="#ico-mail"/></svg>
+            </div>
+            <span class="c-info-text">yassin@sonic.ae</span>
+          </div>
+          <div class="c-info-row">
+            <div class="c-icon-wrap">
+              <svg width="16" height="16" style="color:#25D366"><use href="#ico-whatsapp"/></svg>
+            </div>
+            <span class="c-info-text">+971 50 123 4567</span>
+          </div>
+          <div class="c-info-row">
+            <div class="c-icon-wrap">
+              <svg width="16" height="16" style="color:#0A2342"><use href="#ico-globe"/></svg>
+            </div>
+            <span class="c-info-text">sonic.ae</span>
+          </div>
+        </div>
+      </div>
+      <div class="c-footer">
+        <button class="c-footer-btn primary">
+          <svg width="14" height="14"><use href="#ico-save"/></svg> Save Contact
+        </button>
+        <button class="c-footer-btn">
+          <svg width="14" height="14"><use href="#ico-share"/></svg> Share Card
+        </button>
+      </div>
+      <div class="c-footer-qr">
+        <span class="c-url">dashboard.sonic.ae/card/yassin</span>
+        <div class="qr" style="width:56px;height:56px;border:1px solid #eee;border-radius:6px;">
+          <svg viewBox="0 0 100 100"><use href="#qr-template" x="0" y="0" width="100" height="100"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VARIANT D ══ -->
+<div class="section">
+  <div class="option-label"><span>Option D</span> — Horizontal Split</div>
+  <div class="cards-row">
+    <div class="d-card card" style="border-radius:20px;overflow:hidden;">
+      <div class="d-left">
+        <div class="d-avatar">Y</div>
+        <div class="d-role-badge">Broker</div>
+        <div class="d-qr-wrap">
+          <svg viewBox="0 0 100 100" style="width:60px;height:60px;"><use href="#qr-template" x="0" y="0" width="100" height="100"/></svg>
+        </div>
+      </div>
+      <div class="d-right">
+        <div class="d-right-top">
+          <div class="d-logo-row">
+            <div class="p-mark-sm">P</div>
+            <div>
+              <div class="d-company">Sonic Real Estate</div>
+              <div class="d-tagline">Dubai · UAE</div>
+            </div>
+          </div>
+          <div class="d-gold-bar"></div>
+          <div class="d-name">Yassin Ammary</div>
+          <div class="d-title">Senior Real Estate Broker</div>
+        </div>
+        <div class="d-info">
+          <div class="d-info-row">
+            <div class="d-icon-wrap">
+              <svg width="14" height="14" style="color:#0A2342"><use href="#ico-phone"/></svg>
+            </div>
+            <span class="d-info-text">+971 50 123 4567</span>
+          </div>
+          <div class="d-info-row">
+            <div class="d-icon-wrap">
+              <svg width="14" height="14" style="color:#0A2342"><use href="#ico-mail"/></svg>
+            </div>
+            <span class="d-info-text">yassin@sonic.ae</span>
+          </div>
+          <div class="d-info-row">
+            <div class="d-icon-wrap">
+              <svg width="14" height="14" style="color:#25D366"><use href="#ico-whatsapp"/></svg>
+            </div>
+            <span class="d-info-text">+971 50 123 4567</span>
+          </div>
+          <div class="d-info-row">
+            <div class="d-icon-wrap">
+              <svg width="14" height="14" style="color:#0A2342"><use href="#ico-globe"/></svg>
+            </div>
+            <span class="d-info-text">sonic.ae</span>
+          </div>
+        </div>
+        <div class="d-right-footer">
+          <button class="d-btn d-btn-save">
+            <svg width="12" height="12"><use href="#ico-save"/></svg> Save Contact
+          </button>
+          <button class="d-btn d-btn-share">
+            <svg width="12" height="12"><use href="#ico-share"/></svg> Share
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p style="text-align:center;color:#bbb;font-size:12px;margin-top:10px;padding-bottom:40px;">
+  "P" will be replaced with the actual Sonic Real Estate logo · QR links to the agent's public card page
+</p>
+
+</body>
+</html>

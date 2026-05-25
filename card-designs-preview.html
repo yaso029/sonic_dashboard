@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sonic E-Card Design Options</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a2e; font-family: 'Segoe UI', sans-serif; padding: 40px 20px; }
+  h1 { color: #C9A84C; text-align: center; font-size: 22px; margin-bottom: 6px; letter-spacing: 1px; }
+  .subtitle { color: rgba(255,255,255,0.4); text-align: center; font-size: 13px; margin-bottom: 50px; }
+  .section { margin-bottom: 70px; }
+  .option-label {
+    text-align: center; margin-bottom: 24px;
+    font-size: 13px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: rgba(255,255,255,0.35);
+  }
+  .option-label span { color: #C9A84C; }
+  .cards-row { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+
+  /* ── SHARED CARD SIZES ── */
+  .card { width: 360px; border-radius: 20px; overflow: hidden; position: relative; }
+
+  /* ── QR PLACEHOLDER ── */
+  .qr-box {
+    width: 80px; height: 80px; background: #fff;
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .qr-inner {
+    width: 64px; height: 64px;
+    background:
+      repeating-conic-gradient(#000 0% 25%, #fff 0% 50%) 0 0 / 8px 8px,
+      repeating-conic-gradient(#000 0% 25%, #fff 0% 50%) 4px 4px / 8px 8px;
+    background-size: 8px 8px;
+    border-radius: 4px;
+    position: relative;
+  }
+  .qr-inner::after {
+    content: '';
+    position: absolute;
+    inset: 18px;
+    background: #fff;
+    border-radius: 2px;
+    border: 3px solid #000;
+  }
+
+  /* ── LOGO MARK ── */
+  .logo-p {
+    font-size: 20px; font-weight: 900;
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* ── BUTTONS SHARED ── */
+  .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+  .btn {
+    flex: 1; padding: 11px 8px; border-radius: 10px; border: none;
+    font-size: 12px; font-weight: 700; cursor: pointer; letter-spacing: 0.3px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+
+  /* ═══════════════════════════════════════════
+     OPTION 1 — DARK LUXURY (Gold + Black)
+  ═══════════════════════════════════════════ */
+  .card-1 {
+    background: #080c14;
+    border: 1px solid rgba(201,168,76,0.25);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,168,76,0.1) inset;
+  }
+  .card-1-top {
+    background: linear-gradient(135deg, #0d1728 0%, #1a2540 100%);
+    padding: 28px 28px 24px;
+    position: relative;
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+  }
+  .card-1-top::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .card-1-logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+  .card-1-logo-p {
+    background: linear-gradient(135deg, #C9A84C, #f0d98a);
+    color: #0d1728;
+  }
+  .card-1-company { font-size: 14px; font-weight: 800; color: #fff; letter-spacing: -0.3px; }
+  .card-1-tagline { font-size: 9px; letter-spacing: 2.5px; color: #C9A84C; text-transform: uppercase; margin-top: 1px; }
+  .card-1-avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: linear-gradient(135deg, #C9A84C33, #C9A84C55);
+    border: 2px solid rgba(201,168,76,0.5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; color: #C9A84C; font-weight: 900; margin-bottom: 14px;
+  }
+  .card-1-name { font-size: 22px; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
+  .card-1-title { font-size: 11px; color: #C9A84C; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px; }
+  .card-1-bottom { padding: 22px 28px; }
+  .card-1-info-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .card-1-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.2);
+    display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;
+  }
+  .card-1-info-text { font-size: 13px; color: rgba(255,255,255,0.75); }
+  .card-1-divider { height: 1px; background: rgba(201,168,76,0.12); margin: 16px 0; }
+  .card-1-bottom-row { display: flex; align-items: flex-end; justify-content: space-between; }
+  .card-1-btn-save {
+    background: linear-gradient(135deg, #C9A84C, #e8c96a);
+    color: #0d1728;
+  }
+  .card-1-btn-share {
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.3);
+    color: #C9A84C;
+  }
+
+  /* ═══════════════════════════════════════════
+     OPTION 2 — CLEAN WHITE PROFESSIONAL
+  ═══════════════════════════════════════════ */
+  .card-2 {
+    background: #fff;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    border-radius: 20px;
+  }
+  .card-2-banner {
+    height: 100px;
+    background: linear-gradient(135deg, #0A2342 0%, #1e3a5f 100%);
+    position: relative;
+    display: flex; align-items: flex-end; padding: 0 28px 0;
+  }
+  .card-2-banner::after {
+    content: '';
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 200px; height: 100px;
+    background: url("data:image/svg+xml,%3Csvg width='200' height='100' viewBox='0 0 200 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='180' cy='20' r='70' fill='rgba(201,168,76,0.08)'/%3E%3C/svg%3E");
+  }
+  .card-2-logo-banner {
+    display: flex; align-items: center; gap: 10px;
+    position: absolute; top: 18px; left: 28px;
+  }
+  .card-2-logo-p {
+    background: linear-gradient(135deg, #C9A84C, #f0d98a);
+    color: #0A2342;
+  }
+  .card-2-company-w { font-size: 15px; font-weight: 800; color: #fff; }
+  .card-2-tagline-w { font-size: 9px; letter-spacing: 2px; color: rgba(201,168,76,0.9); text-transform: uppercase; }
+  .card-2-avatar-wrap {
+    position: relative; margin-bottom: -36px;
+  }
+  .card-2-avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: linear-gradient(135deg, #0A2342, #1e3a5f);
+    border: 3px solid #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; color: #fff; font-weight: 900;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  .card-2-body { padding: 46px 28px 24px; }
+  .card-2-name { font-size: 22px; font-weight: 900; color: #0A2342; letter-spacing: -0.5px; }
+  .card-2-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: #C9A84C; margin-top: 4px; margin-bottom: 20px;
+  }
+  .card-2-divider { height: 1.5px; background: #f0f0f0; margin-bottom: 18px; }
+  .card-2-info-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .card-2-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: #f0f4ff; display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+  }
+  .card-2-info-text { font-size: 13px; color: #444; }
+  .card-2-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 28px; background: #f8fafc;
+    border-top: 1px solid #f0f0f0;
+    border-radius: 0 0 20px 20px;
+  }
+  .card-2-btn-save { background: #0A2342; color: #fff; }
+  .card-2-btn-share { background: #fff; color: #0A2342; border: 1.5px solid #e0e0e0; }
+  .card-2-btn { flex: none !important; padding: 10px 16px !important; }
+
+  /* ═══════════════════════════════════════════
+     OPTION 3 — GRADIENT MODERN (Glassmorphism)
+  ═══════════════════════════════════════════ */
+  .card-3-wrap {
+    background: linear-gradient(135deg, #7f1d1d 0%, #3b0a0a 50%, #0d1728 100%);
+    border-radius: 20px; padding: 2px;
+    box-shadow: 0 30px 80px rgba(127,29,29,0.4);
+  }
+  .card-3 {
+    background: linear-gradient(155deg, rgba(13,23,40,0.95) 0%, rgba(30,10,10,0.97) 100%);
+    border-radius: 19px;
+    backdrop-filter: blur(20px);
+    position: relative; overflow: hidden;
+  }
+  .card-3::before {
+    content: '';
+    position: absolute; top: -80px; right: -80px;
+    width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(220,38,38,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .card-3::after {
+    content: '';
+    position: absolute; bottom: -60px; left: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .card-3-top { padding: 28px 28px 20px; position: relative; }
+  .card-3-logo-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .card-3-logo-inner { display: flex; align-items: center; gap: 10px; }
+  .card-3-logo-p {
+    background: linear-gradient(135deg, #C9A84C, #f0d98a);
+    color: #0d1728;
+  }
+  .card-3-company { font-size: 14px; font-weight: 800; color: #fff; }
+  .card-3-tagline { font-size: 9px; letter-spacing: 2px; color: rgba(201,168,76,0.8); text-transform: uppercase; }
+  .card-3-badge {
+    background: rgba(220,38,38,0.2); border: 1px solid rgba(220,38,38,0.4);
+    border-radius: 20px; padding: 4px 12px;
+    font-size: 10px; font-weight: 700; color: #fca5a5; letter-spacing: 1px;
+  }
+  .card-3-profile { display: flex; align-items: center; gap: 18px; }
+  .card-3-avatar {
+    width: 80px; height: 80px; border-radius: 16px;
+    background: linear-gradient(135deg, rgba(220,38,38,0.3), rgba(201,168,76,0.2));
+    border: 1.5px solid rgba(220,38,38,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; font-weight: 900; color: #fff; flex-shrink: 0;
+  }
+  .card-3-name { font-size: 22px; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
+  .card-3-title {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.8px;
+    text-transform: uppercase; color: #f87171; margin-top: 4px;
+  }
+  .card-3-mid {
+    margin: 20px 28px 0;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 10px;
+    position: relative;
+  }
+  .card-3-info-row { display: flex; align-items: center; gap: 10px; }
+  .card-3-icon {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: rgba(220,38,38,0.15);
+    display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0;
+  }
+  .card-3-info-text { font-size: 13px; color: rgba(255,255,255,0.7); }
+  .card-3-bottom {
+    padding: 20px 28px 24px; display: flex;
+    align-items: center; justify-content: space-between;
+    position: relative;
+  }
+  .card-3-btn-save {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(220,38,38,0.4);
+  }
+  .card-3-btn-share {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.8);
+  }
+  .card-3-qr .qr-box { background: rgba(255,255,255,0.95); }
+</style>
+</head>
+<body>
+
+<h1>Sonic System — E-Card Designs</h1>
+<p class="subtitle">3 options for your team's digital business cards</p>
+
+<!-- ══════════════════════════════════
+     OPTION 1 — DARK LUXURY
+══════════════════════════════════ -->
+<div class="section">
+  <div class="option-label"><span>Option 1</span> — Dark Luxury</div>
+  <div class="cards-row">
+
+    <div class="card card-1">
+      <div class="card-1-top">
+        <!-- Logo -->
+        <div class="card-1-logo-row">
+          <div class="logo-p card-1-logo-p">P</div>
+          <div>
+            <div class="card-1-company">Sonic System</div>
+            <div class="card-1-tagline">Real Estate Platform</div>
+          </div>
+        </div>
+        <!-- Avatar + Name -->
+        <div class="card-1-avatar">Y</div>
+        <div class="card-1-name">Yassin Ammary</div>
+        <div class="card-1-title">Senior Real Estate Broker</div>
+      </div>
+
+      <div class="card-1-bottom">
+        <!-- Info rows -->
+        <div class="card-1-info-row">
+          <div class="card-1-icon">📱</div>
+          <div class="card-1-info-text">+971 50 123 4567</div>
+        </div>
+        <div class="card-1-info-row">
+          <div class="card-1-icon">✉️</div>
+          <div class="card-1-info-text">yassin@sonic.ae</div>
+        </div>
+        <div class="card-1-info-row">
+          <div class="card-1-icon">🌐</div>
+          <div class="card-1-info-text">sonic.ae</div>
+        </div>
+
+        <div class="card-1-divider"></div>
+
+        <!-- QR + Buttons -->
+        <div class="card-1-bottom-row">
+          <div>
+            <div class="btn-row">
+              <button class="btn card-1-btn-save">💾 Save Contact</button>
+              <button class="btn card-1-btn-share">↗ Share</button>
+            </div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:12px;">dashboard.sonic.ae/card/yassin</div>
+          </div>
+          <div class="qr-box" style="margin-left:16px;">
+            <div class="qr-inner"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     OPTION 2 — CLEAN WHITE
+══════════════════════════════════ -->
+<div class="section">
+  <div class="option-label"><span>Option 2</span> — Clean White Professional</div>
+  <div class="cards-row">
+
+    <div class="card card-2" style="background:#fff;">
+      <!-- Banner -->
+      <div class="card-2-banner">
+        <div class="card-2-logo-banner">
+          <div class="logo-p card-2-logo-p">P</div>
+          <div>
+            <div class="card-2-company-w">Sonic System</div>
+            <div class="card-2-tagline-w">Real Estate Platform</div>
+          </div>
+        </div>
+        <div class="card-2-avatar-wrap">
+          <div class="card-2-avatar">Y</div>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="card-2-body">
+        <div class="card-2-name">Yassin Ammary</div>
+        <div class="card-2-title">Senior Real Estate Broker</div>
+        <div class="card-2-divider"></div>
+
+        <div class="card-2-info-row">
+          <div class="card-2-icon">📱</div>
+          <div class="card-2-info-text">+971 50 123 4567</div>
+        </div>
+        <div class="card-2-info-row">
+          <div class="card-2-icon">✉️</div>
+          <div class="card-2-info-text">yassin@sonic.ae</div>
+        </div>
+        <div class="card-2-info-row">
+          <div class="card-2-icon">🌐</div>
+          <div class="card-2-info-text">sonic.ae</div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="card-2-footer">
+        <div style="display:flex;gap:8px;">
+          <button class="btn card-2-btn card-2-btn-save">💾 Save Contact</button>
+          <button class="btn card-2-btn card-2-btn-share">↗ Share</button>
+        </div>
+        <div class="qr-box" style="width:64px;height:64px;">
+          <div class="qr-inner" style="width:50px;height:50px;"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     OPTION 3 — GRADIENT MODERN
+══════════════════════════════════ -->
+<div class="section">
+  <div class="option-label"><span>Option 3</span> — Gradient Modern</div>
+  <div class="cards-row">
+
+    <div class="card-3-wrap" style="width:360px;">
+      <div class="card card-3" style="width:100%;border-radius:19px;">
+        <div class="card-3-top">
+          <!-- Logo row -->
+          <div class="card-3-logo-row">
+            <div class="card-3-logo-inner">
+              <div class="logo-p card-3-logo-p">P</div>
+              <div>
+                <div class="card-3-company">Sonic System</div>
+                <div class="card-3-tagline">Real Estate Platform</div>
+              </div>
+            </div>
+            <div class="card-3-badge">BROKER</div>
+          </div>
+
+          <!-- Profile -->
+          <div class="card-3-profile">
+            <div class="card-3-avatar">Y</div>
+            <div>
+              <div class="card-3-name">Yassin Ammary</div>
+              <div class="card-3-title">Senior Real Estate Broker</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info panel -->
+        <div class="card-3-mid">
+          <div class="card-3-info-row">
+            <div class="card-3-icon">📱</div>
+            <div class="card-3-info-text">+971 50 123 4567</div>
+          </div>
+          <div class="card-3-info-row">
+            <div class="card-3-icon">✉️</div>
+            <div class="card-3-info-text">yassin@sonic.ae</div>
+          </div>
+          <div class="card-3-info-row">
+            <div class="card-3-icon">🌐</div>
+            <div class="card-3-info-text">sonic.ae</div>
+          </div>
+        </div>
+
+        <!-- Bottom: buttons + QR -->
+        <div class="card-3-bottom">
+          <div>
+            <div class="btn-row">
+              <button class="btn card-3-btn-save">💾 Save Contact</button>
+              <button class="btn card-3-btn-share">↗ Share</button>
+            </div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:10px;">dashboard.sonic.ae/card/yassin</div>
+          </div>
+          <div class="qr-box card-3-qr" style="margin-left:16px;">
+            <div class="qr-inner"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<p style="text-align:center;color:rgba(255,255,255,0.2);font-size:12px;margin-top:20px;">
+  Note: The "P" logo placeholder will be replaced with your actual Sonic Real Estate logo image.
+  The QR code pattern is a visual placeholder — the real one will link to the agent's card URL.
+</p>
+
+</body>
+</html>

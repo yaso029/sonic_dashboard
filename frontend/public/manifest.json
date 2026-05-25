@@ -1,0 +1,17 @@
+{
+  "name": "Sonic",
+  "short_name": "Sonic",
+  "description": "Sonic CRM Platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111111",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "/sonic-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

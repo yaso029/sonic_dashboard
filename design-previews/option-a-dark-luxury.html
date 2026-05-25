@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Option A — Dark Luxury</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #060d1f 0%, #0a1628 50%, #0d1f3c 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 40px 24px;
+  }
+
+  .header { text-align: center; margin-bottom: 56px; }
+  .logo-line {
+    display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 10px;
+  }
+  .logo-icon {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, #C9A84C, #e8c96a);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 900; color: #060d1f;
+    box-shadow: 0 0 24px rgba(201,168,76,0.4);
+  }
+  .logo-text { font-size: 40px; font-weight: 900; color: #fff; letter-spacing: -1.5px; }
+  .logo-sub {
+    font-size: 11px; letter-spacing: 5px; color: #C9A84C;
+    text-transform: uppercase; margin-top: 6px;
+  }
+  .welcome {
+    font-size: 14px; color: rgba(255,255,255,0.45); margin-top: 14px;
+  }
+  .welcome span { color: rgba(255,255,255,0.75); font-weight: 600; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 280px);
+    gap: 20px;
+    max-width: 920px;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 32px 28px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    backdrop-filter: blur(12px);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+    opacity: 0.9;
+  }
+  .card::after {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+    opacity: 0.06;
+    transition: opacity 0.25s;
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    border-color: var(--accent);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px var(--accent), inset 0 0 40px rgba(255,255,255,0.02);
+  }
+  .card:hover::after { opacity: 0.12; }
+
+  .card.locked { opacity: 0.55; }
+  .card.coming { opacity: 0.35; border-style: dashed; cursor: not-allowed; }
+  .card.coming:hover { transform: none; box-shadow: none; border-color: rgba(255,255,255,0.08); }
+
+  .badge {
+    position: absolute; top: 16px; right: 16px;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 9px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+  }
+  .badge.restricted { background: rgba(201,168,76,0.15); color: #C9A84C; border: 1px solid rgba(201,168,76,0.3); }
+  .badge.soon { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.4); }
+
+  .card-icon { font-size: 36px; margin-bottom: 16px; display: block; }
+  .card-title { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 4px; letter-spacing: -0.3px; }
+  .card-sub {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--accent); margin-bottom: 12px;
+    opacity: 0.8;
+  }
+  .card-desc { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.65; margin-bottom: 24px; }
+  .card-btn {
+    display: inline-block;
+    padding: 9px 18px;
+    background: var(--accent);
+    color: #060d1f;
+    border-radius: 8px;
+    font-size: 12px; font-weight: 800;
+    letter-spacing: 0.3px;
+  }
+  .card.coming .card-btn {
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.3);
+  }
+
+  .sign-out {
+    margin-top: 48px;
+    background: none; border: none;
+    color: rgba(255,255,255,0.25); font-size: 12px; cursor: pointer;
+    letter-spacing: 0.5px;
+  }
+  .sign-out:hover { color: rgba(255,255,255,0.5); }
+
+  /* wide card */
+  .card.wide { grid-column: span 1; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-line">
+    <div class="logo-icon">P</div>
+    <div class="logo-text">Sonic System</div>
+  </div>
+  <div class="logo-sub">Real Estate Operations Platform</div>
+  <div class="welcome">Welcome back, <span>Yaso</span> — select your module</div>
+</div>
+
+<div class="grid">
+
+  <div class="card" style="--accent: #4f8ef7;">
+    <span class="card-icon">📋</span>
+    <div class="card-title">CRM</div>
+    <div class="card-sub">Leads & Pipeline</div>
+    <div class="card-desc">Manage leads, track your pipeline, assign brokers and monitor team performance.</div>
+    <div class="card-btn">Open CRM →</div>
+  </div>
+
+  <div class="card" style="--accent: #a78bfa;">
+    <span class="badge restricted">🔒 Admin Only</span>
+    <span class="card-icon">🤝</span>
+    <div class="card-title">Partnerships</div>
+    <div class="card-sub">Referral Partners</div>
+    <div class="card-desc">Manage referral partners, send WhatsApp & Email campaigns and track commissions.</div>
+    <div class="card-btn">Open →</div>
+  </div>
+
+  <div class="card" style="--accent: #f87171;">
+    <span class="card-icon">📊</span>
+    <div class="card-title">Agents Dashboard</div>
+    <div class="card-sub">Property Vault & Resources</div>
+    <div class="card-desc">Browse property listings, promotions, developer events and training videos.</div>
+    <div class="card-btn">Open →</div>
+  </div>
+
+  <div class="card coming" style="--accent: #34d399;">
+    <span class="badge soon">Coming Soon</span>
+    <span class="card-icon">👥</span>
+    <div class="card-title">HR</div>
+    <div class="card-sub">Human Resources</div>
+    <div class="card-desc">Manage employee records, attendance, leave requests and HR workflows.</div>
+    <div class="card-btn">Coming Soon</div>
+  </div>
+
+  <div class="card coming" style="--accent: #fbbf24;">
+    <span class="badge soon">Coming Soon</span>
+    <span class="card-icon">💰</span>
+    <div class="card-title">Accounting</div>
+    <div class="card-sub">Finance & Reports</div>
+    <div class="card-desc">Track invoices, expenses, commissions and generate financial reports.</div>
+    <div class="card-btn">Coming Soon</div>
+  </div>
+
+</div>
+
+<button class="sign-out">Sign out</button>
+
+</body>
+</html>
