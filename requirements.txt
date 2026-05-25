@@ -1,3 +1,8 @@
+# ── Deployed API dependencies (Railway) ──────────────────────────────
+# Only what the FastAPI backend imports. Local-only tooling (the Instagram
+# scraper + generate_docs.py) used curl_cffi / lxml / pillow / reportlab /
+# beautifulsoup4 — those are intentionally NOT here because they aren't used by
+# the running API and their source builds are the usual cause of deploy failures.
 fastapi==0.111.0
 uvicorn[standard]==0.29.0
 sqlalchemy==2.0.30
@@ -13,13 +18,9 @@ openpyxl==3.1.2
 xlrd==2.0.1
 httpx==0.27.0
 cloudinary==1.40.0
-reportlab==4.5.1
-curl_cffi==0.7.3
-anthropic==0.103.1
-beautifulsoup4==4.12.3
-lxml==5.2.2
-pillow==10.3.0
 # Billing — imported at startup by stripe_service.py (required even in manual mode)
 stripe==15.1.0
 # Web push — imported lazily by notification_service.py
 pywebpush==1.14.1
+# AI document analysis — imported lazily by ai_service.py (optional, pure-Python)
+anthropic==0.103.1
