@@ -27,7 +27,6 @@ export default function SettingsPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
-  const isYaso = user?.email === 'yaso@sonic.com';
 
   const [ownPassword, setOwnPassword] = useState('');
   const [ownPwSaving, setOwnPwSaving] = useState(false);
@@ -45,10 +44,10 @@ export default function SettingsPage() {
   const teamLeaders = users.filter(u => u.role === 'marketing_manager');
 
   useEffect(() => {
-    if (isYaso) {
+    if (isAdmin) {
       api.get('/api/users').then(r => setUsers(r.data)).catch(() => {});
     }
-  }, [isYaso]);
+  }, [isAdmin]);
 
   const handleOwnPassword = async (e) => {
     e.preventDefault();
@@ -169,7 +168,7 @@ export default function SettingsPage() {
         </Section>
 
         {/* Admin: User Management */}
-        {isYaso && (
+        {isAdmin && (
           <>
             <Section title="User Management">
               <div className="mb-5 flex items-center justify-between">

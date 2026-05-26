@@ -140,7 +140,7 @@ export default function LeadDetailPage() {
             → Convert to Client
           </button>
         )}
-        {user?.email === 'yaso@sonic.com' && (
+        {user?.role === 'admin' && (
           <button
             onClick={deleteLead}
             className="btn btn-danger btn-sm flex-shrink-0"
