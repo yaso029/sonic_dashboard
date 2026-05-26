@@ -63,6 +63,9 @@ const ROLE_LABELS = {
   analyst: 'Marketing Analyst',
   social_media_specialist: 'Social Media Specialist',
   seo_specialist: 'SEO Specialist',
+  wordpress_developer: 'WordPress Developer',
+  graphic_designer: 'Graphic Designer',
+  video_editor: 'Video Editor',
   hr_admin: 'HR Admin',
 };
 

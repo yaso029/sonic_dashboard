@@ -3,8 +3,8 @@ import api from '../api';
 import toast from 'react-hot-toast';
 
 // Data-driven role hues (one per role).
-const ROLE_COLORS = { admin: '#8b5cf6', marketing_manager: '#3b82f6', marketing_specialist: '#10b981', analyst: '#f59e0b', social_media_specialist: '#ec4899', seo_specialist: '#06b6d4', hr_admin: '#0d7377' };
-const ROLE_LABELS = { admin: 'Admin', marketing_manager: 'Marketing Manager', marketing_specialist: 'Marketing Specialist', analyst: 'Marketing Analyst', social_media_specialist: 'Social Media Specialist', seo_specialist: 'SEO Specialist', hr_admin: 'HR Admin' };
+const ROLE_COLORS = { admin: '#8b5cf6', marketing_manager: '#3b82f6', marketing_specialist: '#10b981', analyst: '#f59e0b', social_media_specialist: '#ec4899', seo_specialist: '#06b6d4', wordpress_developer: '#21759b', graphic_designer: '#e11d8f', video_editor: '#f97316', hr_admin: '#0d7377' };
+const ROLE_LABELS = { admin: 'Admin', marketing_manager: 'Marketing Manager', marketing_specialist: 'Marketing Specialist', analyst: 'Marketing Analyst', social_media_specialist: 'Social Media Specialist', seo_specialist: 'SEO Specialist', wordpress_developer: 'WordPress Developer', graphic_designer: 'Graphic Designer', video_editor: 'Video Editor', hr_admin: 'HR Admin' };
 
 function PasswordRevealModal({ name, password, onClose }) {
   const [copied, setCopied] = useState(false);
@@ -143,6 +143,9 @@ function UserModal({ user, teamLeaders, onClose, onSaved }) {
             <option value="analyst">Marketing Analyst</option>
             <option value="social_media_specialist">Social Media Specialist</option>
             <option value="seo_specialist">SEO Specialist</option>
+            <option value="wordpress_developer">WordPress Developer</option>
+            <option value="graphic_designer">Graphic Designer</option>
+            <option value="video_editor">Video Editor</option>
             <option value="hr_admin">HR Admin</option>
             <option value="admin">Admin</option>
           </select>

@@ -63,10 +63,10 @@ export default function App() {
       <Route path="/" element={<PrivateRoute><Landing /></PrivateRoute>} />
 
       {/* CRM module — tabbed single page */}
-      <Route path="/crm" element={<PrivateRoute roles={['admin', 'marketing_manager', 'marketing_specialist', 'analyst', 'social_media_specialist', 'seo_specialist']}><CRMPage /></PrivateRoute>} />
+      <Route path="/crm" element={<PrivateRoute roles={['admin', 'marketing_manager', 'marketing_specialist', 'analyst', 'social_media_specialist', 'seo_specialist', 'wordpress_developer', 'graphic_designer', 'video_editor']}><CRMPage /></PrivateRoute>} />
 
       {/* Lead detail — uses sidebar layout */}
-      <Route path="/crm/leads" element={<PrivateRoute roles={['admin', 'marketing_manager', 'marketing_specialist', 'analyst', 'social_media_specialist', 'seo_specialist']}><Layout /></PrivateRoute>}>
+      <Route path="/crm/leads" element={<PrivateRoute roles={['admin', 'marketing_manager', 'marketing_specialist', 'analyst', 'social_media_specialist', 'seo_specialist', 'wordpress_developer', 'graphic_designer', 'video_editor']}><Layout /></PrivateRoute>}>
         <Route path=":id" element={<LeadDetailPage />} />
       </Route>
 
@@ -86,23 +86,23 @@ export default function App() {
       </Route>
 
       {/* Marketing Specialists module — all marketing staff */}
-      <Route path="/agents" element={<PrivateRoute roles={['admin', 'marketing_manager', 'marketing_specialist', 'analyst', 'social_media_specialist', 'seo_specialist']}><AgentsLayout /></PrivateRoute>}>
+      <Route path="/agents" element={<PrivateRoute roles={['admin', 'marketing_manager', 'marketing_specialist', 'analyst', 'social_media_specialist', 'seo_specialist', 'wordpress_developer', 'graphic_designer', 'video_editor']}><AgentsLayout /></PrivateRoute>}>
         <Route index element={<AgentsDashboard />} />
       </Route>
 
       {/* Clients module — all marketing staff */}
-      <Route path="/clients" element={<PrivateRoute roles={['admin', 'marketing_manager', 'marketing_specialist', 'analyst', 'social_media_specialist', 'seo_specialist']}><ClientsPage /></PrivateRoute>} />
-      <Route path="/clients/:id" element={<PrivateRoute roles={['admin', 'marketing_manager', 'marketing_specialist', 'analyst', 'social_media_specialist', 'seo_specialist']}><ClientDetailPage /></PrivateRoute>} />
+      <Route path="/clients" element={<PrivateRoute roles={['admin', 'marketing_manager', 'marketing_specialist', 'analyst', 'social_media_specialist', 'seo_specialist', 'wordpress_developer', 'graphic_designer', 'video_editor']}><ClientsPage /></PrivateRoute>} />
+      <Route path="/clients/:id" element={<PrivateRoute roles={['admin', 'marketing_manager', 'marketing_specialist', 'analyst', 'social_media_specialist', 'seo_specialist', 'wordpress_developer', 'graphic_designer', 'video_editor']}><ClientDetailPage /></PrivateRoute>} />
 
       {/* Client Services — practice-wide engagements view */}
-      <Route path="/services" element={<PrivateRoute roles={['admin', 'marketing_manager', 'marketing_specialist', 'analyst', 'social_media_specialist', 'seo_specialist']}><ServicesPage /></PrivateRoute>} />
+      <Route path="/services" element={<PrivateRoute roles={['admin', 'marketing_manager', 'marketing_specialist', 'analyst', 'social_media_specialist', 'seo_specialist', 'wordpress_developer', 'graphic_designer', 'video_editor']}><ServicesPage /></PrivateRoute>} />
 
       {/* Documents — practice-wide secure client document vault */}
-      <Route path="/documents" element={<PrivateRoute roles={['admin', 'marketing_manager', 'marketing_specialist', 'analyst', 'social_media_specialist', 'seo_specialist']}><DocumentsPage /></PrivateRoute>} />
+      <Route path="/documents" element={<PrivateRoute roles={['admin', 'marketing_manager', 'marketing_specialist', 'analyst', 'social_media_specialist', 'seo_specialist', 'wordpress_developer', 'graphic_designer', 'video_editor']}><DocumentsPage /></PrivateRoute>} />
 
       {/* Billing module — marketing staff (read+); analyst/content_creation/tax are read-only */}
-      <Route path="/billing" element={<PrivateRoute roles={['admin', 'marketing_manager', 'marketing_specialist', 'analyst', 'social_media_specialist', 'seo_specialist']}><InvoicesPage /></PrivateRoute>} />
-      <Route path="/billing/:id" element={<PrivateRoute roles={['admin', 'marketing_manager', 'marketing_specialist', 'analyst', 'social_media_specialist', 'seo_specialist']}><InvoiceDetailPage /></PrivateRoute>} />
+      <Route path="/billing" element={<PrivateRoute roles={['admin', 'marketing_manager', 'marketing_specialist', 'analyst', 'social_media_specialist', 'seo_specialist', 'wordpress_developer', 'graphic_designer', 'video_editor']}><InvoicesPage /></PrivateRoute>} />
+      <Route path="/billing/:id" element={<PrivateRoute roles={['admin', 'marketing_manager', 'marketing_specialist', 'analyst', 'social_media_specialist', 'seo_specialist', 'wordpress_developer', 'graphic_designer', 'video_editor']}><InvoiceDetailPage /></PrivateRoute>} />
 
       {/* Calendar module — all authenticated users */}
       <Route path="/calendar" element={<PrivateRoute><CalendarLayout /></PrivateRoute>}>

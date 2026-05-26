@@ -105,6 +105,49 @@ PERMISSIONS: dict[str, dict[str, object]] = {
         "settings":     {"read"},
     },
 
+    # ── Production / creative roles ─────────────────────────────────────────────
+    # Team members who deliver work: they view the firm's data (read), manage their
+    # own tasks, and upload deliverables. They also use Team Tasks + Video Studio,
+    # which are gated outside this matrix (any authenticated user).
+    "wordpress_developer": {
+        "clients":      {"read"},
+        "services":     {"read"},
+        "tasks":        {"read", "create", "update"},
+        "documents":    {"read", "create"},
+        "invoices":     {"read"},
+        "leads":        {"read"},
+        "calendar":     {"read", "create", "update"},
+        "ecards":       {"read"},
+        "notifications": {"read"},
+        "settings":     {"read"},
+    },
+
+    "graphic_designer": {
+        "clients":      {"read"},
+        "services":     {"read"},
+        "tasks":        {"read", "create", "update"},
+        "documents":    {"read", "create"},
+        "invoices":     {"read"},
+        "leads":        {"read"},
+        "calendar":     {"read", "create", "update"},
+        "ecards":       {"read"},
+        "notifications": {"read"},
+        "settings":     {"read"},
+    },
+
+    "video_editor": {
+        "clients":      {"read"},
+        "services":     {"read"},
+        "tasks":        {"read", "create", "update"},
+        "documents":    {"read", "create"},
+        "invoices":     {"read"},
+        "leads":        {"read"},
+        "calendar":     {"read", "create", "update"},
+        "ecards":       {"read"},
+        "notifications": {"read"},
+        "settings":     {"read"},
+    },
+
     "hr_admin": {
         "hr":           _ALL,
         "ecards":       _ALL,

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import api from '../api';
 
-const ROLE_LABELS = { admin: 'Administrator', marketing_manager: 'Marketing Manager', marketing_specialist: 'Marketing Specialist', analyst: 'Marketing Analyst', social_media_specialist: 'Social Media Specialist', seo_specialist: 'SEO Specialist', hr_admin: 'HR Admin' };
+const ROLE_LABELS = { admin: 'Administrator', marketing_manager: 'Marketing Manager', marketing_specialist: 'Marketing Specialist', analyst: 'Marketing Analyst', social_media_specialist: 'Social Media Specialist', seo_specialist: 'SEO Specialist', wordpress_developer: 'WordPress Developer', graphic_designer: 'Graphic Designer', video_editor: 'Video Editor', hr_admin: 'HR Admin' };
 
 function Section({ title, children }) {
   return (
@@ -196,6 +196,9 @@ export default function SettingsPage() {
                         <option value="analyst">Marketing Analyst</option>
                         <option value="social_media_specialist">Social Media Specialist</option>
                         <option value="seo_specialist">SEO Specialist</option>
+                        <option value="wordpress_developer">WordPress Developer</option>
+                        <option value="graphic_designer">Graphic Designer</option>
+                        <option value="video_editor">Video Editor</option>
                         <option value="admin">Admin</option>
                         <option value="hr_admin">HR Admin</option>
                       </select>
