@@ -36,6 +36,7 @@ import InvoiceDetailPage from './pages/billing/InvoiceDetailPage';
 import PortalApp from './pages/portal/PortalApp';
 import AuditLogPage from './pages/security/AuditLogPage';
 import TeamTasksPage from './pages/teamtasks/TeamTasksPage';
+import KlingStudioPage from './pages/kling/KlingStudioPage';
 
 function PrivateRoute({ children, roles }) {
   const { user } = useAuth();
@@ -124,6 +125,9 @@ export default function App() {
       {/* Settings — all authenticated users */}
       {/* Team Task Management — any authenticated user (page adapts to role) */}
       <Route path="/team-tasks" element={<PrivateRoute><TeamTasksPage /></PrivateRoute>} />
+
+      {/* Video Studio — Kling AI video generation (any authenticated user) */}
+      <Route path="/video-studio" element={<PrivateRoute><KlingStudioPage /></PrivateRoute>} />
 
       <Route path="/settings" element={<PrivateRoute><SettingsPage /></PrivateRoute>} />
 

@@ -39,7 +39,15 @@ const MODULES = [
     type: 'restricted', path: '/hr',
   },
   {
-    key: 'settings', num: '05', icon: '⚙️', title: 'Settings',
+    key: 'video', num: '05', icon: '🎬', title: 'Video Studio',
+    subtitle: 'AI Video Generation',
+    desc: 'Generate AI videos from text, an image, or first/last frames using Kling.',
+    bg: 'linear-gradient(145deg,#1a1430,#0a0612)', orbColor: '#7c5cff', accentColor: '#c9b8ff',
+    btnBg: 'rgba(124,92,255,0.18)',
+    type: 'active', path: '/video-studio',
+  },
+  {
+    key: 'settings', num: '06', icon: '⚙️', title: 'Settings',
     subtitle: 'Account & Management',
     desc: 'View your account, change your password and manage system users.',
     bg: 'linear-gradient(145deg,#2a2a2a,#0d0d0d)', orbColor: '#bdbdbd', accentColor: '#e5e5e5',
