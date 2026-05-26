@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from backend.database.db import get_db
 from backend.database.models import User
-from backend.services.permissions import can
+from backend.services.permissions import can, can_user
 import os
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "sonic-crm-secret-key-change-in-production")
@@ -105,7 +105,7 @@ def require_permission(resource: str, action: str):
         current_user: User = Depends(require_permission("clients", "create"))
     """
     def checker(current_user: User = Depends(get_current_user)) -> User:
-        if not can(current_user.role, resource, action):
+        if not can_user(current_user, resource, action):
             raise HTTPException(
                 status_code=403,
                 detail=f"Permission denied: cannot {action} {resource}",

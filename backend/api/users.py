@@ -21,9 +21,31 @@ class CreateUserRequest(BaseModel):
     password: str
     role: str
     team_leader_id: Optional[int] = None
+    permissions: Optional[dict] = None  # custom module access override (None => role default)
 
 
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+
+# Resources a custom override may reference (matrix resources + the route-gated
+# modules) and the actions allowed per resource.
+from backend.services.permissions import RESOURCES, ALWAYS_ON_MODULES
+_ALLOWED_PERM_KEYS = set(RESOURCES) | set(ALWAYS_ON_MODULES)
+_ALLOWED_ACTIONS = {"read", "create", "update", "delete", "assign", "convert"}
+
+
+def clean_permissions(perms):
+    """Validate/sanitise a permission override: keep only known resources and
+    actions, drop empties. Returns a clean dict, or None if nothing usable."""
+    if not isinstance(perms, dict):
+        return None
+    out = {}
+    for resource, actions in perms.items():
+        if resource not in _ALLOWED_PERM_KEYS or not isinstance(actions, (list, tuple)):
+            continue
+        kept = sorted({a for a in actions if a in _ALLOWED_ACTIONS})
+        if kept:
+            out[resource] = kept
+    return out or None
 
 
 class UpdateUserRequest(BaseModel):
@@ -32,6 +54,7 @@ class UpdateUserRequest(BaseModel):
     role: Optional[str] = None
     team_leader_id: Optional[int] = None
     is_active: Optional[bool] = None
+    permissions: Optional[dict] = None  # send {} to clear (revert to role default)
 
 
 class UpdatePasswordRequest(BaseModel):
@@ -47,6 +70,7 @@ def user_to_dict(u: User):
         "team_leader_id": u.team_leader_id,
         "team_leader_name": u.team_leader.full_name if u.team_leader else None,
         "is_active": u.is_active,
+        "permissions": u.permissions or None,
         "created_at": u.created_at.isoformat() if u.created_at else None,
     }
 
@@ -109,6 +133,7 @@ def create_user(req: CreateUserRequest, request: Request, current_user: User = D
         password_hash=hash_password(req.password),
         role=req.role,
         team_leader_id=req.team_leader_id,
+        permissions=clean_permissions(req.permissions),
     )
     db.add(user)
     db.commit()
@@ -136,6 +161,8 @@ def update_user(user_id: int, req: UpdateUserRequest, request: Request, current_
         user.team_leader_id = req.team_leader_id
     if req.is_active is not None:
         user.is_active = req.is_active
+    if req.permissions is not None:
+        user.permissions = clean_permissions(req.permissions)  # {} clears -> None (role default)
     db.commit()
     db.refresh(user)
     audit_service.record("user_updated", actor_user_id=current_user.id, actor_label=current_user.full_name,

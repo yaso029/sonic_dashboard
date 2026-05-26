@@ -5,6 +5,35 @@ import api from '../api';
 
 const ROLE_LABELS = { admin: 'Administrator', marketing_manager: 'Marketing Manager', marketing_specialist: 'Marketing Specialist', analyst: 'Marketing Analyst', social_media_specialist: 'Social Media Specialist', seo_specialist: 'SEO Specialist', wordpress_developer: 'WordPress Developer', graphic_designer: 'Graphic Designer', video_editor: 'Video Editor', hr_admin: 'HR Admin' };
 
+// Per-user module access matrix (None / View / Full). Each module key maps to a
+// backend resource (video_studio & team_tasks are route-gated pseudo-resources).
+const PERM_MODULES = [
+  { key: 'leads', label: 'CRM / Leads' },
+  { key: 'clients', label: 'Clients' },
+  { key: 'services', label: 'Services' },
+  { key: 'tasks', label: 'Tasks' },
+  { key: 'documents', label: 'Documents' },
+  { key: 'invoices', label: 'Billing' },
+  { key: 'calendar', label: 'Calendar' },
+  { key: 'team_tasks', label: 'Team Tasks' },
+  { key: 'video_studio', label: 'Video Studio' },
+  { key: 'hr', label: 'HR' },
+];
+const LEVELS = ['none', 'view', 'full'];
+const FULL_ACTIONS = ['read', 'create', 'update', 'delete', 'assign', 'convert'];
+const ACCESS_ONLY = new Set(['video_studio', 'team_tasks']);  // access = read; no "full" distinction
+const defaultLevels = () => Object.fromEntries(PERM_MODULES.map(m => [m.key, 'none']));
+
+function buildPermissions(levels) {
+  const perms = {};
+  for (const m of PERM_MODULES) {
+    const lvl = levels[m.key] || 'none';
+    if (lvl === 'view') perms[m.key] = ['read'];
+    else if (lvl === 'full') perms[m.key] = ACCESS_ONLY.has(m.key) ? ['read'] : FULL_ACTIONS;
+  }
+  return perms;
+}
+
 function Section({ title, children }) {
   return (
     <div className="card mb-6 p-7">
@@ -40,6 +69,9 @@ export default function SettingsPage() {
   const [addForm, setAddForm] = useState({ full_name: '', email: '', password: '', role: 'marketing_specialist', team_leader_id: '' });
   const [addSaving, setAddSaving] = useState(false);
   const [addMsg, setAddMsg] = useState('');
+  const [customAccess, setCustomAccess] = useState(false);
+  const [moduleLevels, setModuleLevels] = useState(defaultLevels());
+  const setAllLevels = (lvl) => setModuleLevels(Object.fromEntries(PERM_MODULES.map(m => [m.key, lvl])));
 
   const teamLeaders = users.filter(u => u.role === 'marketing_manager');
 
@@ -85,9 +117,14 @@ export default function SettingsPage() {
     setAddMsg('');
     try {
       const payload = { ...addForm, team_leader_id: addForm.team_leader_id ? parseInt(addForm.team_leader_id) : null };
+      if (customAccess && addForm.role !== 'admin') {
+        payload.permissions = buildPermissions(moduleLevels);
+      }
       await api.post('/api/users', payload);
       setAddMsg('User created successfully');
       setAddForm({ full_name: '', email: '', password: '', role: 'marketing_specialist', team_leader_id: '' });
+      setCustomAccess(false);
+      setModuleLevels(defaultLevels());
       api.get('/api/users').then(r => setUsers(r.data));
       setShowAddUser(false);
     } catch (err) {
@@ -212,6 +249,51 @@ export default function SettingsPage() {
                       </div>
                     )}
                   </div>
+
+                  {/* Per-user module access (None / View / Full) */}
+                  {addForm.role === 'admin' ? (
+                    <div className="mb-4 rounded-lg bg-[var(--surface)] px-3 py-2.5 text-xs text-[var(--text-muted)]">
+                      Admins always have full access to every module.
+                    </div>
+                  ) : (
+                    <div className="mb-4">
+                      <label className="flex cursor-pointer items-center gap-2 text-[13px] font-semibold text-[var(--text)]">
+                        <input type="checkbox" checked={customAccess} onChange={e => setCustomAccess(e.target.checked)} />
+                        Customize module access (override the role default)
+                      </label>
+                      {customAccess && (
+                        <div className="mt-3 rounded-xl border border-[var(--border)] p-3">
+                          <div className="mb-2 flex items-center gap-2 text-[11px] text-[var(--text-muted)]">
+                            <span>Quick set:</span>
+                            {LEVELS.map(l => (
+                              <button type="button" key={l} onClick={() => setAllLevels(l)} className="rounded bg-[var(--surface)] px-2 py-0.5 capitalize hover:text-[var(--text)]">All {l}</button>
+                            ))}
+                          </div>
+                          {PERM_MODULES.map(m => (
+                            <div key={m.key} className="flex items-center justify-between border-b border-[var(--border)] py-1.5 last:border-0">
+                              <span className="text-[13px] text-[var(--text)]">{m.label}</span>
+                              <div className="flex gap-1">
+                                {LEVELS.map(lvl => {
+                                  const active = (moduleLevels[m.key] || 'none') === lvl;
+                                  return (
+                                    <button type="button" key={lvl}
+                                      onClick={() => setModuleLevels(s => ({ ...s, [m.key]: lvl }))}
+                                      className={`rounded px-2.5 py-1 text-[11px] font-semibold capitalize ${active ? 'bg-primary text-white' : 'bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--text)]'}`}>
+                                      {lvl}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          ))}
+                          <div className="mt-2 text-[10.5px] leading-relaxed text-[var(--text-muted)]">
+                            View = read-only · Full = create/edit/delete. Modules left on “None” are hidden for this user.
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {addMsg && <div className={`mb-2.5 text-xs ${addMsg.includes('success') ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500'}`}>{addMsg}</div>}
                   <button type="submit" disabled={addSaving} className="btn btn-accent">
                     {addSaving ? 'Creating...' : 'Create User'}

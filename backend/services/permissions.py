@@ -198,4 +198,42 @@ def service_type_scope(role: str) -> Optional[list[str]]:
     return SERVICE_TYPE_SCOPE.get(role)
 
 
+# ─── Per-user permission overrides ─────────────────────────────────────────────
+# Modules that are open to every role-based user (gated by route, not the matrix).
+# A user with a CUSTOM override only gets these if explicitly granted in it.
+ALWAYS_ON_MODULES = ("video_studio", "team_tasks")
+
+
+def effective_permissions(user) -> dict:
+    """The permission map actually in force for `user`:
+    - admins: always the full matrix (never restricted),
+    - users with a custom `permissions` override: exactly that map,
+    - everyone else: their role's matrix permissions.
+    Role-based users implicitly keep the always-on modules so behaviour is
+    unchanged; a custom override must list them explicitly to grant access.
+    """
+    if getattr(user, "role", None) == "admin":
+        perms = permissions_for("admin")
+        for m in ALWAYS_ON_MODULES:
+            perms.setdefault(m, ["read"])
+        return perms
+    custom = getattr(user, "permissions", None)
+    if custom:
+        return {k: sorted(set(v)) for k, v in custom.items() if v}
+    perms = permissions_for(getattr(user, "role", "") or "")
+    for m in ALWAYS_ON_MODULES:
+        perms.setdefault(m, ["read"])
+    return perms
+
+
+def can_user(user, resource: str, action: str) -> bool:
+    """Override-aware permission check used by API guards. Admins always pass."""
+    if not user:
+        return False
+    if getattr(user, "role", None) == "admin":
+        return True
+    actions = effective_permissions(user).get(resource)
+    return bool(actions) and action in actions
+
+
 ALL_ROLES = list(PERMISSIONS.keys())

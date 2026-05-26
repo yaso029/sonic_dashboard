@@ -7,7 +7,7 @@ from backend.database.models import User
 from backend.services.auth_service import (
     verify_password, create_access_token, get_current_user, hash_password
 )
-from backend.services.permissions import permissions_for, service_type_scope
+from backend.services.permissions import permissions_for, service_type_scope, effective_permissions
 from backend.services import audit_service, rate_limit
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
@@ -80,7 +80,7 @@ def me(current_user: User = Depends(get_current_user)):
         "email": current_user.email,
         "role": current_user.role,
         "team_leader_id": current_user.team_leader_id,
-        "permissions": permissions_for(current_user.role),
+        "permissions": effective_permissions(current_user),
         "service_type_scope": service_type_scope(current_user.role),
     }
 
@@ -88,11 +88,13 @@ def me(current_user: User = Depends(get_current_user)):
 @router.get("/me/permissions")
 def my_permissions(current_user: User = Depends(get_current_user)):
     """Flat permission map for the frontend: { resource: [actions] }.
+    Override-aware (custom per-user permissions win over the role default).
     Drives permission-based UI hiding (see usePermissions hook)."""
     return {
         "role": current_user.role,
-        "permissions": permissions_for(current_user.role),
+        "permissions": effective_permissions(current_user),
         "service_type_scope": service_type_scope(current_user.role),
+        "custom": bool(current_user.permissions),
     }
 
 

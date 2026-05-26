@@ -4,6 +4,10 @@ import { useState, useEffect } from 'react';
 import api from '../api';
 import useIsMobile from '../hooks/useIsMobile';
 import NotificationBell from '../components/NotificationBell';
+import usePermissions from '../hooks/usePermissions';
+
+// Which permission resource controls each hub card (null => always visible).
+const MODULE_RESOURCE = { crm: 'leads', tasks: 'team_tasks', calendar: 'calendar', hr: 'hr', video: 'video_studio', settings: null };
 
 const MODULES = [
   {
@@ -124,9 +128,18 @@ function ModuleCard({ mod, onClick, user }) {
 export default function Landing() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { can, loading: permsLoading } = usePermissions();
   const isMobile = useIsMobile();
   const [modal, setModal] = useState(null);
   const [stats, setStats] = useState({ leads: '—', partners: '—', team: '—' });
+
+  // Show only modules the user can access (settings always visible). While
+  // permissions load, show all to avoid a flash of an empty hub.
+  const canSeeModule = (mod) => {
+    const res = MODULE_RESOURCE[mod.key];
+    return !res || can(res, 'read');
+  };
+  const visibleModules = permsLoading ? MODULES : MODULES.filter(canSeeModule);
 
   useEffect(() => {
     Promise.allSettled([
@@ -205,7 +218,7 @@ export default function Landing() {
         <div className="flex-1 overflow-y-auto px-4 py-5">
           <div className="mb-3.5 text-[11px] font-bold uppercase tracking-[2px] text-[var(--text-muted)]">Select a module</div>
           <div className="flex flex-col gap-3">
-            {MODULES.map(mod => {
+            {visibleModules.map(mod => {
               const isLocked = mod.type === 'restricted' && user?.role !== 'admin' && !(user?.role === 'hr_admin' && mod.key === 'hr');
               return (
                 <div key={mod.key} onClick={() => handleClick(mod)}
@@ -290,10 +303,10 @@ export default function Landing() {
       <div style={{ padding: '36px 48px 48px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted, #9CA3AF)', letterSpacing: 2, textTransform: 'uppercase' }}>Modules</div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted, #9CA3AF)' }}>{MODULES.length} modules</div>
+          <div style={{ fontSize: 11, color: 'var(--text-muted, #9CA3AF)' }}>{visibleModules.length} modules</div>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 14 }}>
-          {MODULES.map(mod => (
+          {visibleModules.map(mod => (
             <ModuleCard key={mod.key} mod={mod} onClick={() => handleClick(mod)} user={user} />
           ))}
         </div>

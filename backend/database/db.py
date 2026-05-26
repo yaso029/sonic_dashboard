@@ -40,12 +40,23 @@ def run_light_migrations():
 
     `Base.metadata.create_all` creates *missing tables* but never ALTERs an
     existing one, so columns added to a model after its table already exists must
-    be backfilled here. Idempotent; SQLite only. Safe to call on every startup.
+    be backfilled here. Idempotent. Safe to call on every startup.
     """
     from sqlalchemy import inspect, text
 
+    inspector = inspect(engine)
+    existing_tables = set(inspector.get_table_names())
+
+    # ── Cross-backend (SQLite + Postgres): per-user permission overrides ─────────
+    # JSON is valid DDL on both SQLite (TEXT affinity) and Postgres.
+    if "users" in existing_tables:
+        user_cols = {c["name"] for c in inspector.get_columns("users")}
+        if "permissions" not in user_cols:
+            with engine.begin() as conn:
+                conn.execute(text("ALTER TABLE users ADD COLUMN permissions JSON"))
+
     if not engine.url.drivername.startswith("sqlite"):
-        return  # real migrations (Alembic) handle Postgres deployments
+        return  # remaining additive columns below were for SQLite dev DBs
 
     # table -> list of (column_name, column_ddl) introduced after initial create
     wanted = {

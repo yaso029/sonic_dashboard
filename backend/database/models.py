@@ -16,6 +16,9 @@ class User(Base):
     role = Column(String(30), nullable=False, default="marketing_specialist")
     team_leader_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     is_active = Column(Boolean, default=True)
+    # Optional per-user permission override: { resource: [actions] }. NULL/empty =>
+    # use the role's default permissions. Admins are always full regardless.
+    permissions = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     team_leader = relationship(

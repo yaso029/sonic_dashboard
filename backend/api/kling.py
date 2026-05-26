@@ -20,8 +20,16 @@ from pydantic import BaseModel
 
 from backend.database.models import User
 from backend.services.auth_service import get_current_user
+from backend.services.permissions import can_user
 
 router = APIRouter(prefix="/api/kling", tags=["kling"])
+
+
+def _require_video_access(current_user: User = Depends(get_current_user)) -> User:
+    """Gate generation behind the per-user 'video_studio' module access."""
+    if not can_user(current_user, "video_studio", "read"):
+        raise HTTPException(status_code=403, detail="You don't have access to Video Studio")
+    return current_user
 
 DEFAULT_BASE_URL = "https://api-singapore.klingai.com"
 MODEL_NAME = "kling-v3"
@@ -109,7 +117,7 @@ class Text2Video(BaseModel):
 
 
 @router.post("/text-to-video")
-async def text_to_video(req: Text2Video, current_user: User = Depends(get_current_user)):
+async def text_to_video(req: Text2Video, current_user: User = Depends(_require_video_access)):
     _require_configured()
     if not req.prompt:
         raise HTTPException(status_code=400, detail="prompt is required")
@@ -134,7 +142,7 @@ async def image_to_video(
     duration: str = Form("5"),
     mode: str = Form("std"),
     image: UploadFile = File(...),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(_require_video_access),
 ):
     _require_configured()
     if not prompt:
@@ -162,7 +170,7 @@ async def frames_to_video(
     mode: str = Form("std"),
     first_frame: UploadFile = File(...),
     last_frame: UploadFile = File(...),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(_require_video_access),
 ):
     _require_configured()
     payload = {
@@ -181,7 +189,7 @@ async def frames_to_video(
 
 # ─── poll task status ───────────────────────────────────────────────────────
 @router.get("/task/{task_type}/{task_id}")
-async def poll_task(task_type: str, task_id: str, current_user: User = Depends(get_current_user)):
+async def poll_task(task_type: str, task_id: str, current_user: User = Depends(_require_video_access)):
     _require_configured()
     if task_type not in _VALID_TASK_TYPES:
         raise HTTPException(status_code=400, detail="Invalid task type")
