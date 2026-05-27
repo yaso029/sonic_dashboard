@@ -20,6 +20,7 @@ RESOURCES = (
     "clients", "services", "tasks", "documents", "invoices", "leads", "users",
     "partners", "commissions", "hr", "calendar", "ecards",
     "whatsapp", "email", "notifications", "settings",
+    "content", "analytics",
 )
 
 # ─── Permission matrix ────────────────────────────────────────────────────────
@@ -156,6 +157,15 @@ PERMISSIONS: dict[str, dict[str, object]] = {
         "settings":     {"read"},
     },
 }
+
+# Baseline access to the newer marketing modules for every non-admin role so they
+# show up by default (admins already get everything via _ALL). Admins can still
+# narrow any individual user via the per-user permission override.
+for _role, _perms in PERMISSIONS.items():
+    if _role == "admin":
+        continue
+    _perms.setdefault("content", {"read", "create", "update", "delete"})
+    _perms.setdefault("analytics", {"read", "create", "update", "delete"})
 
 # Roles that only see services of certain types (and their parent clients).
 # None or empty means "all service types".

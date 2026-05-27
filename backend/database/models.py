@@ -464,6 +464,46 @@ class Message(Base):
     recipient = relationship("User", foreign_keys=[recipient_id])
 
 
+# ─── Content Calendar: planned social posts per client ────────────────────────
+class ContentPost(Base):
+    __tablename__ = "content_posts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    client_id = Column(Integer, ForeignKey("clients.id"), nullable=True, index=True)
+    title = Column(String(300), nullable=False)
+    caption = Column(Text, nullable=True)
+    channel = Column(String(30), default="instagram")   # instagram, facebook, linkedin, tiktok, ...
+    scheduled_date = Column(String(20), nullable=True, index=True)  # YYYY-MM-DD
+    status = Column(String(20), default="idea")          # idea, draft, review, approved, scheduled, published
+    assigned_to = Column(Integer, ForeignKey("users.id"), nullable=True)
+    created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    client = relationship("Client", foreign_keys=[client_id])
+    assignee = relationship("User", foreign_keys=[assigned_to])
+    creator = relationship("User", foreign_keys=[created_by])
+
+
+# ─── Analytics & KPIs: per-client monthly metric entries ──────────────────────
+class KpiEntry(Base):
+    __tablename__ = "kpi_entries"
+
+    id = Column(Integer, primary_key=True, index=True)
+    client_id = Column(Integer, ForeignKey("clients.id"), nullable=True, index=True)
+    period = Column(String(7), nullable=False, index=True)   # YYYY-MM
+    metric = Column(String(40), nullable=False)              # followers, reach, leads, spend, roas, ...
+    value = Column(Float, default=0.0)
+    channel = Column(String(30), nullable=True)
+    note = Column(String(300), nullable=True)
+    created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    client = relationship("Client", foreign_keys=[client_id])
+
+
 # ─── Documents (Phase 4): client files + access audit trail ───────────────────
 # Storage-backend-agnostic: `stored_key` is an opaque key resolved by
 # backend/services/storage_service.py (local filesystem today; S3/Supabase later).

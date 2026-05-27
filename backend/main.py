@@ -32,6 +32,8 @@ from backend.api import team_tasks as team_tasks_routes
 from backend.api import kling as kling_routes
 from backend.api import notes as notes_routes
 from backend.api import messages as messages_routes
+from backend.api import content as content_routes
+from backend.api import analytics as analytics_routes
 import os
 
 app = FastAPI(title="Sonic CRM API", version="2.0.0")
@@ -112,6 +114,12 @@ app.include_router(notes_routes.router)
 
 # Internal messaging — direct messages + real-time WebSocket delivery
 app.include_router(messages_routes.router)
+
+# Content Calendar — planned social posts per client
+app.include_router(content_routes.router)
+
+# Analytics & KPIs — per-client monthly marketing metrics
+app.include_router(analytics_routes.router)
 
 
 def seed_admin():

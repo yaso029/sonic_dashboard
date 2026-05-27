@@ -8,7 +8,7 @@ import usePermissions from '../hooks/usePermissions';
 import { useMessages } from '../MessagesContext';
 
 // Which permission resource controls each hub card (null => always visible).
-const MODULE_RESOURCE = { crm: 'leads', tasks: 'team_tasks', calendar: 'calendar', hr: 'hr', video: 'video_studio', notes: null, messages: null, settings: null };
+const MODULE_RESOURCE = { crm: 'leads', tasks: 'team_tasks', calendar: 'calendar', hr: 'hr', video: 'video_studio', content: 'content', analytics: 'analytics', notes: null, messages: null, settings: null };
 
 const MODULES = [
   {
@@ -52,7 +52,23 @@ const MODULES = [
     type: 'active', path: '/video-studio',
   },
   {
-    key: 'notes', num: '06', icon: '📝', title: 'Notes',
+    key: 'content', num: '06', icon: '📅', title: 'Content Calendar',
+    subtitle: 'Plan & Schedule Posts',
+    desc: 'Plan social posts per client across channels with an approval workflow.',
+    bg: 'linear-gradient(145deg,#2a1810,#0f0805)', orbColor: '#fb923c', accentColor: '#fed7aa',
+    btnBg: 'rgba(251,146,60,0.16)',
+    type: 'active', path: '/content',
+  },
+  {
+    key: 'analytics', num: '07', icon: '📊', title: 'Analytics & KPIs',
+    subtitle: 'Performance Metrics',
+    desc: 'Track per-client monthly metrics, trends and reports — reach, leads, ROAS.',
+    bg: 'linear-gradient(145deg,#0c2018,#05100b)', orbColor: '#34d399', accentColor: '#a7f3d0',
+    btnBg: 'rgba(52,211,153,0.16)',
+    type: 'active', path: '/analytics',
+  },
+  {
+    key: 'notes', num: '08', icon: '📝', title: 'Notes',
     subtitle: 'Personal Notepad',
     desc: 'Create, name and edit your own note files — your private scratchpad.',
     bg: 'linear-gradient(145deg,#1e2417,#0a0d07)', orbColor: '#9ccc65', accentColor: '#d6e8c0',
@@ -60,7 +76,7 @@ const MODULES = [
     type: 'active', path: '/notes',
   },
   {
-    key: 'messages', num: '07', icon: '💬', title: 'Messages',
+    key: 'messages', num: '09', icon: '💬', title: 'Messages',
     subtitle: 'Team Chat',
     desc: 'Direct messages between you, your team and the admin — in real time.',
     bg: 'linear-gradient(145deg,#0f2230,#050d12)', orbColor: '#38bdf8', accentColor: '#bae6fd',
@@ -68,7 +84,7 @@ const MODULES = [
     type: 'active', path: '/messages',
   },
   {
-    key: 'settings', num: '08', icon: '⚙️', title: 'Settings',
+    key: 'settings', num: '10', icon: '⚙️', title: 'Settings',
     subtitle: 'Account & Management',
     desc: 'View your account, change your password and manage system users.',
     bg: 'linear-gradient(145deg,#2a2a2a,#0d0d0d)', orbColor: '#bdbdbd', accentColor: '#e5e5e5',

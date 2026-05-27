@@ -39,6 +39,8 @@ import TeamTasksPage from './pages/teamtasks/TeamTasksPage';
 import KlingStudioPage from './pages/kling/KlingStudioPage';
 import NotesPage from './pages/notes/NotesPage';
 import MessagesPage from './pages/messages/MessagesPage';
+import ContentCalendarPage from './pages/content/ContentCalendarPage';
+import AnalyticsPage from './pages/analytics/AnalyticsPage';
 
 function PrivateRoute({ children, roles }) {
   const { user } = useAuth();
@@ -136,6 +138,12 @@ export default function App() {
 
       {/* Messages — internal direct messaging (any authenticated user) */}
       <Route path="/messages" element={<PrivateRoute><MessagesPage /></PrivateRoute>} />
+
+      {/* Content Calendar — plan social posts per client */}
+      <Route path="/content" element={<PrivateRoute><ContentCalendarPage /></PrivateRoute>} />
+
+      {/* Analytics & KPIs — per-client marketing metrics */}
+      <Route path="/analytics" element={<PrivateRoute><AnalyticsPage /></PrivateRoute>} />
 
       <Route path="/settings" element={<PrivateRoute><SettingsPage /></PrivateRoute>} />
 
