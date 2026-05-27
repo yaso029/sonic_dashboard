@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../api';
 import toast from 'react-hot-toast';
 import useIsMobile from '../../hooks/useIsMobile';
+import RichTextEditor from '../../components/RichTextEditor';
 
 function preview(content) {
-  const t = (content || '').trim().replace(/\s+/g, ' ');
+  // content may be HTML — strip tags for the sidebar snippet.
+  const t = (content || '').replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
   return t ? t.slice(0, 60) : 'No additional text';
 }
 
@@ -102,7 +104,7 @@ export default function NotesPage() {
   useEffect(() => () => flushSave(), []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onTitle = (e) => { dirty.current = true; setStatus('idle'); setTitle(e.target.value); };
-  const onContent = (e) => { dirty.current = true; setStatus('idle'); setContent(e.target.value); };
+  const onContent = (html) => { dirty.current = true; setStatus('idle'); setContent(html); };
 
   async function remove(n) {
     if (!window.confirm(`Delete "${n.title}"? This cannot be undone.`)) return;
@@ -151,8 +153,7 @@ export default function NotesPage() {
         <span className="text-[11px] text-[var(--text-muted)]">{statusLabel}</span>
         <button onClick={() => remove(active)} className="btn btn-sm border border-red-300 bg-white text-red-600 hover:bg-red-50">🗑</button>
       </div>
-      <textarea value={content} onChange={onContent} placeholder="Write your note here…"
-        className="flex-1 resize-none bg-transparent px-5 py-4 text-[14px] leading-relaxed text-[var(--text)] outline-none" />
+      <RichTextEditor value={content} onChange={onContent} docKey={active.id} />
     </div>
   ) : (
     <div className="flex h-full items-center justify-center text-[13px] text-[var(--text-muted)]">
