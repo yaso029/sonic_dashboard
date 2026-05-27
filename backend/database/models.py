@@ -435,6 +435,20 @@ class TeamTask(Base):
     creator = relationship("User", foreign_keys=[created_by])
 
 
+# ─── Notes: personal notepad files, private to each user ──────────────────────
+class Note(Base):
+    __tablename__ = "notes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    title = Column(String(300), nullable=False, default="Untitled note")
+    content = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    owner = relationship("User", foreign_keys=[user_id])
+
+
 # ─── Documents (Phase 4): client files + access audit trail ───────────────────
 # Storage-backend-agnostic: `stored_key` is an opaque key resolved by
 # backend/services/storage_service.py (local filesystem today; S3/Supabase later).

@@ -30,6 +30,7 @@ from backend.api import security as security_routes
 from backend.api import reports as reports_routes
 from backend.api import team_tasks as team_tasks_routes
 from backend.api import kling as kling_routes
+from backend.api import notes as notes_routes
 import os
 
 app = FastAPI(title="Sonic CRM API", version="2.0.0")
@@ -104,6 +105,9 @@ app.include_router(team_tasks_routes.router)
 
 # Video Studio — Kling AI video generation (text/image/frames -> video)
 app.include_router(kling_routes.router)
+
+# Notes — personal notepad (private per user)
+app.include_router(notes_routes.router)
 
 
 def seed_admin():

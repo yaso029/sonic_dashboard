@@ -37,6 +37,7 @@ import PortalApp from './pages/portal/PortalApp';
 import AuditLogPage from './pages/security/AuditLogPage';
 import TeamTasksPage from './pages/teamtasks/TeamTasksPage';
 import KlingStudioPage from './pages/kling/KlingStudioPage';
+import NotesPage from './pages/notes/NotesPage';
 
 function PrivateRoute({ children, roles }) {
   const { user } = useAuth();
@@ -128,6 +129,9 @@ export default function App() {
 
       {/* Video Studio — Kling AI video generation (any authenticated user) */}
       <Route path="/video-studio" element={<PrivateRoute><KlingStudioPage /></PrivateRoute>} />
+
+      {/* Notes — personal notepad (any authenticated user) */}
+      <Route path="/notes" element={<PrivateRoute><NotesPage /></PrivateRoute>} />
 
       <Route path="/settings" element={<PrivateRoute><SettingsPage /></PrivateRoute>} />
 

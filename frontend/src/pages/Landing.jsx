@@ -7,7 +7,7 @@ import NotificationBell from '../components/NotificationBell';
 import usePermissions from '../hooks/usePermissions';
 
 // Which permission resource controls each hub card (null => always visible).
-const MODULE_RESOURCE = { crm: 'leads', tasks: 'team_tasks', calendar: 'calendar', hr: 'hr', video: 'video_studio', settings: null };
+const MODULE_RESOURCE = { crm: 'leads', tasks: 'team_tasks', calendar: 'calendar', hr: 'hr', video: 'video_studio', notes: null, settings: null };
 
 const MODULES = [
   {
@@ -51,7 +51,15 @@ const MODULES = [
     type: 'active', path: '/video-studio',
   },
   {
-    key: 'settings', num: '06', icon: '⚙️', title: 'Settings',
+    key: 'notes', num: '06', icon: '📝', title: 'Notes',
+    subtitle: 'Personal Notepad',
+    desc: 'Create, name and edit your own note files — your private scratchpad.',
+    bg: 'linear-gradient(145deg,#1e2417,#0a0d07)', orbColor: '#9ccc65', accentColor: '#d6e8c0',
+    btnBg: 'rgba(156,204,101,0.16)',
+    type: 'active', path: '/notes',
+  },
+  {
+    key: 'settings', num: '07', icon: '⚙️', title: 'Settings',
     subtitle: 'Account & Management',
     desc: 'View your account, change your password and manage system users.',
     bg: 'linear-gradient(145deg,#2a2a2a,#0d0d0d)', orbColor: '#bdbdbd', accentColor: '#e5e5e5',
