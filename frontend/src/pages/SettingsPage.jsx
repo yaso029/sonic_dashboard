@@ -34,6 +34,122 @@ function buildPermissions(levels) {
   return perms;
 }
 
+// Inverse of buildPermissions: turn a stored override map back into None/View/Full
+// levels so the edit form can pre-fill the user's current access.
+function permissionsToLevels(perms) {
+  const levels = defaultLevels();
+  if (!perms) return levels;
+  for (const m of PERM_MODULES) {
+    const acts = perms[m.key];
+    if (!acts || acts.length === 0) { levels[m.key] = 'none'; continue; }
+    if (ACCESS_ONLY.has(m.key)) { levels[m.key] = 'full'; continue; }  // presence = access
+    levels[m.key] = ['create', 'update', 'delete'].some(a => acts.includes(a)) ? 'full' : 'view';
+  }
+  return levels;
+}
+
+const ROLE_OPTIONS = [
+  ['marketing_specialist', 'Marketing Specialist'], ['marketing_manager', 'Marketing Manager'],
+  ['analyst', 'Marketing Analyst'], ['social_media_specialist', 'Social Media Specialist'],
+  ['seo_specialist', 'SEO Specialist'], ['wordpress_developer', 'WordPress Developer'],
+  ['graphic_designer', 'Graphic Designer'], ['video_editor', 'Video Editor'],
+  ['admin', 'Admin'], ['hr_admin', 'HR Admin'],
+];
+
+// Reusable None/View/Full grid, shared by the create form and the edit modal.
+function ModuleMatrix({ levels, setLevels }) {
+  const setAll = (lvl) => setLevels(Object.fromEntries(PERM_MODULES.map(m => [m.key, lvl])));
+  return (
+    <div className="mt-3 rounded-xl border border-[var(--border)] p-3">
+      <div className="mb-2 flex items-center gap-2 text-[11px] text-[var(--text-muted)]">
+        <span>Quick set:</span>
+        {LEVELS.map(l => (
+          <button type="button" key={l} onClick={() => setAll(l)} className="rounded bg-[var(--surface)] px-2 py-0.5 capitalize hover:text-[var(--text)]">All {l}</button>
+        ))}
+      </div>
+      {PERM_MODULES.map(m => (
+        <div key={m.key} className="flex items-center justify-between border-b border-[var(--border)] py-1.5 last:border-0">
+          <span className="text-[13px] text-[var(--text)]">{m.label}</span>
+          <div className="flex gap-1">
+            {LEVELS.map(lvl => {
+              const active = (levels[m.key] || 'none') === lvl;
+              return (
+                <button type="button" key={lvl}
+                  onClick={() => setLevels(s => ({ ...s, [m.key]: lvl }))}
+                  className={`rounded px-2.5 py-1 text-[11px] font-semibold capitalize ${active ? 'bg-primary text-white' : 'bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--text)]'}`}>
+                  {lvl}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+      <div className="mt-2 text-[10.5px] leading-relaxed text-[var(--text-muted)]">
+        View = read-only · Full = create/edit/delete. Modules on “None” are hidden for this user.
+      </div>
+    </div>
+  );
+}
+
+// Edit an existing user's role + module access (no need to delete & recreate).
+function EditUserModal({ user, onClose, onSaved }) {
+  const [role, setRole] = useState(user.role);
+  const [customAccess, setCustomAccess] = useState(!!user.permissions);
+  const [levels, setLevels] = useState(() => permissionsToLevels(user.permissions));
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState('');
+
+  const save = async () => {
+    setSaving(true); setMsg('');
+    try {
+      const payload = { role };
+      // {} clears any override -> revert to role default; admins are always full.
+      payload.permissions = (customAccess && role !== 'admin') ? buildPermissions(levels) : {};
+      await api.put(`/api/users/${user.id}`, payload);
+      onSaved();
+    } catch (e) {
+      setMsg(e?.response?.data?.detail || 'Failed to save changes');
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal w-[560px] max-h-[90vh] overflow-y-auto px-8 py-7">
+        <div className="mb-5 flex items-center justify-between">
+          <h2 className="text-lg font-bold">Edit — {user.full_name}</h2>
+          <button onClick={onClose} className="text-2xl text-gray-400">×</button>
+        </div>
+        <div className="mb-1 text-[11px] text-[var(--text-muted)]">{user.email}</div>
+        <label className="label">Role / Job title</label>
+        <select value={role} onChange={e => setRole(e.target.value)} className="input mb-4">
+          {ROLE_OPTIONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+        </select>
+
+        {role === 'admin' ? (
+          <div className="mb-4 rounded-lg bg-[var(--surface-2)] px-3 py-2.5 text-xs text-[var(--text-muted)]">
+            Admins always have full access to every module.
+          </div>
+        ) : (
+          <div className="mb-4">
+            <label className="flex cursor-pointer items-center gap-2 text-[13px] font-semibold text-[var(--text)]">
+              <input type="checkbox" checked={customAccess} onChange={e => setCustomAccess(e.target.checked)} />
+              Customize module access (override the role default)
+            </label>
+            {customAccess && <ModuleMatrix levels={levels} setLevels={setLevels} />}
+          </div>
+        )}
+
+        {msg && <div className="mb-2.5 text-xs text-red-500">{msg}</div>}
+        <div className="flex justify-end gap-2.5">
+          <button onClick={onClose} className="btn btn-ghost">Cancel</button>
+          <button onClick={save} disabled={saving} className="btn btn-primary">{saving ? 'Saving…' : 'Save Changes'}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Section({ title, children }) {
   return (
     <div className="card mb-6 p-7">
@@ -71,7 +187,7 @@ export default function SettingsPage() {
   const [addMsg, setAddMsg] = useState('');
   const [customAccess, setCustomAccess] = useState(false);
   const [moduleLevels, setModuleLevels] = useState(defaultLevels());
-  const setAllLevels = (lvl) => setModuleLevels(Object.fromEntries(PERM_MODULES.map(m => [m.key, lvl])));
+  const [editingUser, setEditingUser] = useState(null);
 
   const teamLeaders = users.filter(u => u.role === 'marketing_manager');
 
@@ -261,36 +377,7 @@ export default function SettingsPage() {
                         <input type="checkbox" checked={customAccess} onChange={e => setCustomAccess(e.target.checked)} />
                         Customize module access (override the role default)
                       </label>
-                      {customAccess && (
-                        <div className="mt-3 rounded-xl border border-[var(--border)] p-3">
-                          <div className="mb-2 flex items-center gap-2 text-[11px] text-[var(--text-muted)]">
-                            <span>Quick set:</span>
-                            {LEVELS.map(l => (
-                              <button type="button" key={l} onClick={() => setAllLevels(l)} className="rounded bg-[var(--surface)] px-2 py-0.5 capitalize hover:text-[var(--text)]">All {l}</button>
-                            ))}
-                          </div>
-                          {PERM_MODULES.map(m => (
-                            <div key={m.key} className="flex items-center justify-between border-b border-[var(--border)] py-1.5 last:border-0">
-                              <span className="text-[13px] text-[var(--text)]">{m.label}</span>
-                              <div className="flex gap-1">
-                                {LEVELS.map(lvl => {
-                                  const active = (moduleLevels[m.key] || 'none') === lvl;
-                                  return (
-                                    <button type="button" key={lvl}
-                                      onClick={() => setModuleLevels(s => ({ ...s, [m.key]: lvl }))}
-                                      className={`rounded px-2.5 py-1 text-[11px] font-semibold capitalize ${active ? 'bg-primary text-white' : 'bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--text)]'}`}>
-                                      {lvl}
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          ))}
-                          <div className="mt-2 text-[10.5px] leading-relaxed text-[var(--text-muted)]">
-                            View = read-only · Full = create/edit/delete. Modules left on “None” are hidden for this user.
-                          </div>
-                        </div>
-                      )}
+                      {customAccess && <ModuleMatrix levels={moduleLevels} setLevels={setModuleLevels} />}
                     </div>
                   )}
 
@@ -316,6 +403,9 @@ export default function SettingsPage() {
                         </div>
                       </div>
                       <div className="flex flex-wrap items-center gap-2">
+                        <button onClick={() => setEditingUser(u)} className="btn btn-outline btn-sm">
+                          ✎ Edit role &amp; access
+                        </button>
                         <input type="password" placeholder="New password" value={resetPw[u.id] || ''}
                           onChange={e => setResetPw(p => ({ ...p, [u.id]: e.target.value }))}
                           className="input w-[150px]" />
@@ -339,6 +429,14 @@ export default function SettingsPage() {
                 ))}
               </div>
             </Section>
+
+            {editingUser && (
+              <EditUserModal
+                user={editingUser}
+                onClose={() => setEditingUser(null)}
+                onSaved={() => { setEditingUser(null); api.get('/api/users').then(r => setUsers(r.data)).catch(() => {}); }}
+              />
+            )}
           </>
         )}
       </div>
