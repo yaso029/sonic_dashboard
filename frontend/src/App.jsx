@@ -38,6 +38,7 @@ import AuditLogPage from './pages/security/AuditLogPage';
 import TeamTasksPage from './pages/teamtasks/TeamTasksPage';
 import KlingStudioPage from './pages/kling/KlingStudioPage';
 import NotesPage from './pages/notes/NotesPage';
+import MessagesPage from './pages/messages/MessagesPage';
 
 function PrivateRoute({ children, roles }) {
   const { user } = useAuth();
@@ -132,6 +133,9 @@ export default function App() {
 
       {/* Notes — personal notepad (any authenticated user) */}
       <Route path="/notes" element={<PrivateRoute><NotesPage /></PrivateRoute>} />
+
+      {/* Messages — internal direct messaging (any authenticated user) */}
+      <Route path="/messages" element={<PrivateRoute><MessagesPage /></PrivateRoute>} />
 
       <Route path="/settings" element={<PrivateRoute><SettingsPage /></PrivateRoute>} />
 

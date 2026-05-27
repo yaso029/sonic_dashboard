@@ -5,9 +5,10 @@ import api from '../api';
 import useIsMobile from '../hooks/useIsMobile';
 import NotificationBell from '../components/NotificationBell';
 import usePermissions from '../hooks/usePermissions';
+import { useMessages } from '../MessagesContext';
 
 // Which permission resource controls each hub card (null => always visible).
-const MODULE_RESOURCE = { crm: 'leads', tasks: 'team_tasks', calendar: 'calendar', hr: 'hr', video: 'video_studio', notes: null, settings: null };
+const MODULE_RESOURCE = { crm: 'leads', tasks: 'team_tasks', calendar: 'calendar', hr: 'hr', video: 'video_studio', notes: null, messages: null, settings: null };
 
 const MODULES = [
   {
@@ -59,7 +60,15 @@ const MODULES = [
     type: 'active', path: '/notes',
   },
   {
-    key: 'settings', num: '07', icon: '⚙️', title: 'Settings',
+    key: 'messages', num: '07', icon: '💬', title: 'Messages',
+    subtitle: 'Team Chat',
+    desc: 'Direct messages between you, your team and the admin — in real time.',
+    bg: 'linear-gradient(145deg,#0f2230,#050d12)', orbColor: '#38bdf8', accentColor: '#bae6fd',
+    btnBg: 'rgba(56,189,248,0.16)',
+    type: 'active', path: '/messages',
+  },
+  {
+    key: 'settings', num: '08', icon: '⚙️', title: 'Settings',
     subtitle: 'Account & Management',
     desc: 'View your account, change your password and manage system users.',
     bg: 'linear-gradient(145deg,#2a2a2a,#0d0d0d)', orbColor: '#bdbdbd', accentColor: '#e5e5e5',
@@ -96,7 +105,7 @@ function Modal({ title, message, color, onClose }) {
 
 const signOut = () => { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = '/login'; };
 
-function ModuleCard({ mod, onClick, user }) {
+function ModuleCard({ mod, onClick, user, badge = 0 }) {
   const [hovered, setHovered] = useState(false);
   const isLocked = mod.type === 'restricted' && user?.role !== 'admin' && !(user?.role === 'hr_admin' && mod.key === 'hr');
 
@@ -118,6 +127,9 @@ function ModuleCard({ mod, onClick, user }) {
       {isLocked && (
         <div style={{ position: 'absolute', top: 14, right: 14, fontSize: 9, fontWeight: 800, letterSpacing: 0.8, textTransform: 'uppercase', padding: '3px 9px', borderRadius: 8, background: 'rgba(217,119,6,0.15)', color: '#F59E0B' }}>Admin Only</div>
       )}
+      {badge > 0 && (
+        <div style={{ position: 'absolute', top: 12, right: 12, minWidth: 22, height: 22, padding: '0 6px', borderRadius: 11, background: '#ef4444', color: '#fff', fontSize: 11, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(239,68,68,0.5)' }}>{badge > 99 ? '99+' : badge}</div>
+      )}
       <div style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.18)', letterSpacing: 3, marginBottom: 18 }}>{mod.num}</div>
       <div style={{ fontSize: 30, marginBottom: 14 }}>{mod.icon}</div>
       <div style={{ fontSize: 19, fontWeight: 900, color: '#fff', letterSpacing: -0.4, marginBottom: 4 }}>{mod.title}</div>
@@ -137,7 +149,9 @@ export default function Landing() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { can, loading: permsLoading } = usePermissions();
+  const { totalUnread } = useMessages();
   const isMobile = useIsMobile();
+  const badgeFor = (mod) => (mod.key === 'messages' ? totalUnread : 0);
   const [modal, setModal] = useState(null);
   const [stats, setStats] = useState({ leads: '—', partners: '—', team: '—' });
 
@@ -237,6 +251,9 @@ export default function Landing() {
                     <div className="text-base font-black tracking-tight text-white">{mod.title}</div>
                     <div className="mt-0.5 text-[10px] font-bold uppercase tracking-wide" style={{ color: mod.accentColor }}>{mod.subtitle}</div>
                   </div>
+                  {badgeFor(mod) > 0 && (
+                    <div className="flex h-[22px] min-w-[22px] shrink-0 items-center justify-center rounded-full bg-red-500 px-1.5 text-[11px] font-bold text-white">{badgeFor(mod) > 99 ? '99+' : badgeFor(mod)}</div>
+                  )}
                   {isLocked ? (
                     <div className="shrink-0 text-base">🔒</div>
                   ) : (
@@ -315,7 +332,7 @@ export default function Landing() {
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 14 }}>
           {visibleModules.map(mod => (
-            <ModuleCard key={mod.key} mod={mod} onClick={() => handleClick(mod)} user={user} />
+            <ModuleCard key={mod.key} mod={mod} onClick={() => handleClick(mod)} user={user} badge={badgeFor(mod)} />
           ))}
         </div>
       </div>

@@ -449,6 +449,21 @@ class Note(Base):
     owner = relationship("User", foreign_keys=[user_id])
 
 
+# ─── Internal messaging: direct messages between staff/admin ──────────────────
+class Message(Base):
+    __tablename__ = "messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    sender_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    recipient_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    body = Column(Text, nullable=False)
+    is_read = Column(Boolean, default=False, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+
+    sender = relationship("User", foreign_keys=[sender_id])
+    recipient = relationship("User", foreign_keys=[recipient_id])
+
+
 # ─── Documents (Phase 4): client files + access audit trail ───────────────────
 # Storage-backend-agnostic: `stored_key` is an opaque key resolved by
 # backend/services/storage_service.py (local filesystem today; S3/Supabase later).

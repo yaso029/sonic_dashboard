@@ -56,6 +56,21 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     return user
 
 
+def get_user_from_token(token: str, db: Session):
+    """Decode a staff JWT and return the active User, or None. Used where the
+    token can't come through a header (e.g. WebSocket query string)."""
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        if payload.get("scope") == "portal":
+            return None
+        user_id = payload.get("sub")
+        if user_id is None:
+            return None
+    except JWTError:
+        return None
+    return db.query(User).filter(User.id == int(user_id), User.is_active == True).first()
+
+
 def require_admin(current_user: User = Depends(get_current_user)) -> User:
     if current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Admin access required")
