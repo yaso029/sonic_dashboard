@@ -34,6 +34,7 @@ from backend.api import notes as notes_routes
 from backend.api import messages as messages_routes
 from backend.api import content as content_routes
 from backend.api import analytics as analytics_routes
+from backend.api import expenses as expenses_routes
 import os
 
 app = FastAPI(title="Sonic CRM API", version="2.0.0")
@@ -120,6 +121,9 @@ app.include_router(content_routes.router)
 
 # Analytics & KPIs — per-client monthly marketing metrics
 app.include_router(analytics_routes.router)
+
+# Company Expenses — internal invoices (USD / SYP)
+app.include_router(expenses_routes.router)
 
 
 def seed_admin():

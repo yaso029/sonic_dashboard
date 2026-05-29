@@ -504,6 +504,24 @@ class KpiEntry(Base):
     client = relationship("Client", foreign_keys=[client_id])
 
 
+# ─── Company Expenses: internal invoices in USD or SYP ────────────────────────
+class Expense(Base):
+    __tablename__ = "expenses"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(300), nullable=False)        # what the invoice is for
+    category = Column(String(80), nullable=True)        # optional grouping (rent, salaries, ads...)
+    amount = Column(Float, default=0.0)
+    currency = Column(String(8), default="USD")         # USD or SYP
+    date = Column(String(20), nullable=False, index=True)  # YYYY-MM-DD
+    note = Column(Text, nullable=True)
+    created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    creator = relationship("User", foreign_keys=[created_by])
+
+
 # ─── Documents (Phase 4): client files + access audit trail ───────────────────
 # Storage-backend-agnostic: `stored_key` is an opaque key resolved by
 # backend/services/storage_service.py (local filesystem today; S3/Supabase later).

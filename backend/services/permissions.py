@@ -20,7 +20,7 @@ RESOURCES = (
     "clients", "services", "tasks", "documents", "invoices", "leads", "users",
     "partners", "commissions", "hr", "calendar", "ecards",
     "whatsapp", "email", "notifications", "settings",
-    "content", "analytics",
+    "content", "analytics", "expenses",
 )
 
 # ─── Permission matrix ────────────────────────────────────────────────────────
@@ -166,6 +166,10 @@ for _role, _perms in PERMISSIONS.items():
         continue
     _perms.setdefault("content", {"read", "create", "update", "delete"})
     _perms.setdefault("analytics", {"read", "create", "update", "delete"})
+
+# Company expenses are sensitive financials: default to managers only (admins get
+# everything via _ALL). Grant to any other user individually via their override.
+PERMISSIONS["marketing_manager"].setdefault("expenses", {"read", "create", "update", "delete"})
 
 # Roles that only see services of certain types (and their parent clients).
 # None or empty means "all service types".

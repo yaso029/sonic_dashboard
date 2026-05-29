@@ -41,6 +41,7 @@ import NotesPage from './pages/notes/NotesPage';
 import MessagesPage from './pages/messages/MessagesPage';
 import ContentCalendarPage from './pages/content/ContentCalendarPage';
 import AnalyticsPage from './pages/analytics/AnalyticsPage';
+import ExpensesPage from './pages/expenses/ExpensesPage';
 
 function PrivateRoute({ children, roles }) {
   const { user } = useAuth();
@@ -144,6 +145,9 @@ export default function App() {
 
       {/* Analytics & KPIs — per-client marketing metrics */}
       <Route path="/analytics" element={<PrivateRoute><AnalyticsPage /></PrivateRoute>} />
+
+      {/* Company Expenses — internal invoices (USD / SYP) */}
+      <Route path="/expenses" element={<PrivateRoute><ExpensesPage /></PrivateRoute>} />
 
       <Route path="/settings" element={<PrivateRoute><SettingsPage /></PrivateRoute>} />
 
