@@ -433,6 +433,28 @@ class TeamTask(Base):
 
     assignee = relationship("User", foreign_keys=[assigned_to])
     creator = relationship("User", foreign_keys=[created_by])
+    subtasks = relationship(
+        "TeamSubtask",
+        foreign_keys="TeamSubtask.parent_task_id",
+        cascade="all, delete-orphan",
+        order_by="TeamSubtask.order_index, TeamSubtask.id",
+    )
+
+
+# ─── Team task subtasks: split a task into smaller steps with status + progress
+class TeamSubtask(Base):
+    __tablename__ = "team_subtasks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    parent_task_id = Column(Integer, ForeignKey("team_tasks.id"), nullable=False, index=True)
+    title = Column(String(300), nullable=False)
+    status = Column(String(20), default="todo")          # todo, in_progress, review, done
+    progress_percent = Column(Integer, default=0)         # 0..100
+    order_index = Column(Integer, default=0)
+    created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
+    completed_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 # ─── Notes: personal notepad files, private to each user ──────────────────────

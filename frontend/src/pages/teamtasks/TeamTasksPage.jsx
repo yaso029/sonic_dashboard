@@ -90,7 +90,91 @@ function MemberControls({ task, onSave }) {
   );
 }
 
-function TaskCard({ task, isAdmin, currentUserId, onMemberSave, onAdminStatus, onEdit, onDelete }) {
+function SubtaskRow({ taskId, sub, canManage, onChange }) {
+  const [title, setTitle] = useState(sub.title);
+  const [pct, setPct] = useState(sub.progress_percent || 0);
+  const done = sub.status === 'done';
+
+  // sync local state if the upstream sub changed (e.g. after parent refetch)
+  useEffect(() => { setTitle(sub.title); setPct(sub.progress_percent || 0); }, [sub.id, sub.title, sub.progress_percent, sub.status]);
+
+  const save = async (patch) => {
+    try { await api.put(`/api/team-tasks/${taskId}/subtasks/${sub.id}`, patch); onChange && onChange(); }
+    catch (e) { toast.error(e.response?.data?.detail || 'Save failed'); }
+  };
+  const toggleDone = () => save({ status: done ? 'todo' : 'done' });
+  const saveTitle = () => { const t = title.trim(); if (t && t !== sub.title) save({ title: t }); else setTitle(sub.title); };
+  const savePct = () => { const n = Math.max(0, Math.min(100, Number(pct) || 0)); if (n !== (sub.progress_percent || 0)) save({ progress_percent: n }); else setPct(n); };
+  const del = async () => {
+    if (!window.confirm('Delete this subtask?')) return;
+    try { await api.delete(`/api/team-tasks/${taskId}/subtasks/${sub.id}`); onChange && onChange(); }
+    catch { toast.error('Delete failed'); }
+  };
+
+  return (
+    <div className="flex items-center gap-1.5 py-0.5">
+      <input type="checkbox" checked={done} onChange={toggleDone} disabled={!canManage} className="h-3.5 w-3.5 cursor-pointer accent-blue-600" />
+      <input
+        value={title} onChange={(e) => setTitle(e.target.value)} onBlur={saveTitle}
+        onKeyDown={(e) => { if (e.key === 'Enter') e.target.blur(); }}
+        disabled={!canManage}
+        className={`flex-1 bg-transparent text-[12.5px] text-ink outline-none ${done ? 'line-through opacity-60' : ''}`}
+      />
+      <input
+        type="number" min={0} max={100} value={pct}
+        onChange={(e) => setPct(e.target.value)} onBlur={savePct}
+        disabled={!canManage || done}
+        className="w-12 rounded border border-gray-200 px-1 py-0.5 text-[11px] text-right outline-none"
+      />
+      <span className="text-[10px] text-gray-400">%</span>
+      {canManage && <button onClick={del} className="text-[12px] text-gray-300 hover:text-red-500" title="Delete subtask">✕</button>}
+    </div>
+  );
+}
+
+function SubtaskList({ task, canManage, onChange }) {
+  const subs = task.subtasks || [];
+  const total = subs.length;
+  const done = subs.filter((s) => s.status === 'done').length;
+  const avg = total > 0 ? Math.round(subs.reduce((a, s) => a + (s.progress_percent || 0), 0) / total) : 0;
+  const [newTitle, setNewTitle] = useState('');
+  const [adding, setAdding] = useState(false);
+
+  const add = async () => {
+    const t = newTitle.trim();
+    if (!t) return;
+    setAdding(true);
+    try { await api.post(`/api/team-tasks/${task.id}/subtasks`, { title: t }); setNewTitle(''); onChange && onChange(); }
+    catch (e) { toast.error(e.response?.data?.detail || 'Failed to add subtask'); }
+    finally { setAdding(false); }
+  };
+
+  if (!canManage && total === 0) return null;
+
+  return (
+    <div className="mt-3 border-t border-gray-100 pt-2">
+      <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-gray-400">
+        Subtasks {total > 0 && <span className="ml-1 text-gray-500">· {done}/{total} done · {avg}% avg</span>}
+      </div>
+      {subs.map((s) => (
+        <SubtaskRow key={s.id} taskId={task.id} sub={s} canManage={canManage} onChange={onChange} />
+      ))}
+      {canManage && (
+        <div className="mt-1 flex items-center gap-1.5">
+          <input
+            value={newTitle} onChange={(e) => setNewTitle(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); add(); } }}
+            placeholder="+ Add a subtask…"
+            className="flex-1 rounded border border-gray-200 px-2 py-1 text-[12px] outline-none focus:border-blue-400"
+          />
+          <button onClick={add} disabled={adding || !newTitle.trim()} className="btn btn-primary !py-1 !text-[11px] disabled:opacity-50">Add</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TaskCard({ task, isAdmin, currentUserId, onMemberSave, onAdminStatus, onEdit, onDelete, onSubtaskChange }) {
   const mine = task.assigned_to === currentUserId;
   return (
     <div className={`mb-2.5 rounded-xl border bg-white p-3 shadow-sm ${task.is_overdue ? 'border-red-200' : 'border-gray-100'}`}>
@@ -117,6 +201,9 @@ function TaskCard({ task, isAdmin, currentUserId, onMemberSave, onAdminStatus, o
       {task.review_notes && (
         <div className="mt-2 rounded bg-amber-50 px-2 py-1.5 text-[11px] text-amber-700"><b>Admin feedback:</b> {task.review_notes}</div>
       )}
+
+      {/* Subtasks — admin or assignee can manage */}
+      <SubtaskList task={task} canManage={isAdmin || mine} onChange={onSubtaskChange} />
 
       {/* Assigned team member controls (their own, not-done task) */}
       {!isAdmin && mine && <MemberControls task={task} onSave={(p) => onMemberSave(task, p)} />}
@@ -342,7 +429,8 @@ export default function TeamTasksPage() {
                   items.map(t => (
                     <TaskCard key={t.id} task={t} isAdmin={isAdmin} currentUserId={user?.id}
                       onMemberSave={memberSave} onAdminStatus={adminStatus}
-                      onEdit={(tk) => setModal(tk)} onDelete={remove} />
+                      onEdit={(tk) => setModal(tk)} onDelete={remove}
+                      onSubtaskChange={fetchAll} />
                   ))
                 )}
               </div>

@@ -18,7 +18,7 @@ from typing import Optional
 from datetime import datetime, date
 
 from backend.database.db import get_db
-from backend.database.models import TeamTask, User
+from backend.database.models import TeamTask, TeamSubtask, User
 from backend.services.auth_service import get_current_user, require_admin
 from backend.services import notification_service, email_service
 
@@ -91,6 +91,7 @@ def to_dict(t: TeamTask) -> dict:
         "member_note": t.member_note,
         "started_at": t.started_at.isoformat() if t.started_at else None,
         "completed_at": t.completed_at.isoformat() if t.completed_at else None,
+        "subtasks": [sub_dict(s) for s in (t.subtasks or [])],
         "created_at": t.created_at.isoformat() if t.created_at else None,
         "updated_at": t.updated_at.isoformat() if t.updated_at else None,
     }
@@ -301,5 +302,142 @@ def delete_team_task(
     if not t:
         raise HTTPException(status_code=404, detail="Task not found")
     db.delete(t)
+    db.commit()
+    return {"ok": True}
+
+
+# ─── Subtasks: split a task into smaller steps ─────────────────────────────────
+# Both the admin and the task's current assignee may add / update / delete
+# subtasks. Each subtask carries its own status and progress %.
+
+class SubtaskCreate(BaseModel):
+    title: str
+    status: Optional[str] = "todo"
+    progress_percent: Optional[int] = 0
+
+
+class SubtaskUpdate(BaseModel):
+    title: Optional[str] = None
+    status: Optional[str] = None
+    progress_percent: Optional[int] = None
+
+
+def sub_dict(s: TeamSubtask) -> dict:
+    return {
+        "id": s.id,
+        "parent_task_id": s.parent_task_id,
+        "title": s.title,
+        "status": s.status,
+        "progress_percent": s.progress_percent or 0,
+        "order_index": s.order_index or 0,
+        "completed_at": s.completed_at.isoformat() if s.completed_at else None,
+        "created_at": s.created_at.isoformat() if s.created_at else None,
+        "updated_at": s.updated_at.isoformat() if s.updated_at else None,
+    }
+
+
+def _can_manage_subtasks(user: User, parent: TeamTask) -> bool:
+    return user.role == "admin" or parent.assigned_to == user.id
+
+
+def _apply_sub_state(s: TeamSubtask):
+    if s.status == "done":
+        s.completed_at = s.completed_at or datetime.utcnow()
+        s.progress_percent = 100
+    else:
+        s.completed_at = None
+    s.updated_at = datetime.utcnow()
+
+
+def _get_parent_or_404(db: Session, task_id: int) -> TeamTask:
+    t = db.query(TeamTask).filter(TeamTask.id == task_id).first()
+    if not t:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return t
+
+
+@router.get("/{task_id}/subtasks")
+def list_subtasks(task_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    t = _get_parent_or_404(db, task_id)
+    if current_user.role != "admin" and t.assigned_to != current_user.id:
+        raise HTTPException(status_code=403, detail="You can only view subtasks of your own tasks")
+    rows = (
+        db.query(TeamSubtask)
+        .filter(TeamSubtask.parent_task_id == task_id)
+        .order_by(TeamSubtask.order_index, TeamSubtask.id)
+        .all()
+    )
+    return [sub_dict(s) for s in rows]
+
+
+@router.post("/{task_id}/subtasks")
+def add_subtask(task_id: int, req: SubtaskCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    t = _get_parent_or_404(db, task_id)
+    if not _can_manage_subtasks(current_user, t):
+        raise HTTPException(status_code=403, detail="Only the admin or the assigned member can add subtasks")
+    title = (req.title or "").strip()[:300]
+    if not title:
+        raise HTTPException(status_code=400, detail="Title is required")
+    if req.status and req.status not in STATUSES:
+        raise HTTPException(status_code=400, detail="Invalid status")
+    last_order = (
+        db.query(TeamSubtask).filter(TeamSubtask.parent_task_id == task_id).count()
+    )
+    s = TeamSubtask(
+        parent_task_id=task_id,
+        title=title,
+        status=req.status or "todo",
+        progress_percent=_clamp_pct(req.progress_percent or 0),
+        order_index=last_order,
+        created_by=current_user.id,
+    )
+    _apply_sub_state(s)
+    db.add(s)
+    db.commit()
+    db.refresh(s)
+    return sub_dict(s)
+
+
+@router.put("/{task_id}/subtasks/{sub_id}")
+def update_subtask(task_id: int, sub_id: int, req: SubtaskUpdate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    t = _get_parent_or_404(db, task_id)
+    if not _can_manage_subtasks(current_user, t):
+        raise HTTPException(status_code=403, detail="Only the admin or the assigned member can edit subtasks")
+    s = (
+        db.query(TeamSubtask)
+        .filter(TeamSubtask.id == sub_id, TeamSubtask.parent_task_id == task_id)
+        .first()
+    )
+    if not s:
+        raise HTTPException(status_code=404, detail="Subtask not found")
+    if req.title is not None:
+        nt = (req.title or "").strip()[:300]
+        if nt:
+            s.title = nt
+    if req.status is not None:
+        if req.status not in STATUSES:
+            raise HTTPException(status_code=400, detail="Invalid status")
+        s.status = req.status
+    if req.progress_percent is not None:
+        s.progress_percent = _clamp_pct(req.progress_percent)
+    _apply_sub_state(s)
+    db.commit()
+    db.refresh(s)
+    return sub_dict(s)
+
+
+@router.delete("/{task_id}/subtasks/{sub_id}")
+def delete_subtask(task_id: int, sub_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    t = _get_parent_or_404(db, task_id)
+    if not _can_manage_subtasks(current_user, t):
+        raise HTTPException(status_code=403, detail="Only the admin or the assigned member can delete subtasks")
+    s = (
+        db.query(TeamSubtask)
+        .filter(TeamSubtask.id == sub_id, TeamSubtask.parent_task_id == task_id)
+        .first()
+    )
+    if not s:
+        raise HTTPException(status_code=404, detail="Subtask not found")
+    db.delete(s)
     db.commit()
     return {"ok": True}
