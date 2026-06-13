@@ -544,6 +544,29 @@ class Expense(Base):
     creator = relationship("User", foreign_keys=[created_by])
 
 
+# ─── Internal Invoices / Bills: paid subscriptions with renewal reminders ─────
+class Bill(Base):
+    __tablename__ = "bills"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(300), nullable=False)              # what the invoice is for
+    vendor = Column(String(200), nullable=True)               # e.g. Hostinger, Adobe, Meta...
+    category = Column(String(80), nullable=True)              # Hosting, Domain, SaaS, Subscription...
+    amount = Column(Float, default=0.0)
+    currency = Column(String(8), default="USD")               # USD or SYP
+    invoice_date = Column(String(20), nullable=False, index=True)  # YYYY-MM-DD
+    recurrence = Column(String(20), default="none")           # none / monthly / yearly
+    expires_at = Column(String(20), nullable=True, index=True)     # YYYY-MM-DD — when activation ends
+    reminder_days = Column(Integer, default=7)                 # remind N days before expiry
+    last_reminded_at = Column(DateTime, nullable=True)        # to avoid duplicate reminders
+    note = Column(Text, nullable=True)
+    created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    creator = relationship("User", foreign_keys=[created_by])
+
+
 # ─── Documents (Phase 4): client files + access audit trail ───────────────────
 # Storage-backend-agnostic: `stored_key` is an opaque key resolved by
 # backend/services/storage_service.py (local filesystem today; S3/Supabase later).

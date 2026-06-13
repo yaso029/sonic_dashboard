@@ -8,7 +8,7 @@ import usePermissions from '../hooks/usePermissions';
 import { useMessages } from '../MessagesContext';
 
 // Which permission resource controls each hub card (null => always visible).
-const MODULE_RESOURCE = { crm: 'leads', tasks: 'team_tasks', calendar: 'calendar', hr: 'hr', video: 'video_studio', content: 'content', analytics: 'analytics', expenses: 'expenses', notes: null, messages: null, settings: null };
+const MODULE_RESOURCE = { crm: 'leads', tasks: 'team_tasks', calendar: 'calendar', hr: 'hr', video: 'video_studio', content: 'content', analytics: 'analytics', expenses: 'expenses', invoices: 'bills', notes: null, messages: null, settings: null };
 
 const MODULES = [
   {
@@ -76,7 +76,15 @@ const MODULES = [
     type: 'active', path: '/expenses',
   },
   {
-    key: 'notes', num: '09', icon: '📝', title: 'Notes',
+    key: 'invoices', num: '09', icon: '🗓️', title: 'Invoices',
+    subtitle: 'Paid Services & Renewals',
+    desc: 'Track paid subscriptions with monthly/yearly renewal reminders before they expire.',
+    bg: 'linear-gradient(145deg,#1a2418,#080d07)', orbColor: '#f97316', accentColor: '#fed7aa',
+    btnBg: 'rgba(249,115,22,0.16)',
+    type: 'active', path: '/invoices',
+  },
+  {
+    key: 'notes', num: '10', icon: '📝', title: 'Notes',
     subtitle: 'Personal Notepad',
     desc: 'Create, name and edit your own note files — your private scratchpad.',
     bg: 'linear-gradient(145deg,#1e2417,#0a0d07)', orbColor: '#9ccc65', accentColor: '#d6e8c0',
@@ -84,7 +92,7 @@ const MODULES = [
     type: 'active', path: '/notes',
   },
   {
-    key: 'messages', num: '10', icon: '💬', title: 'Messages',
+    key: 'messages', num: '11', icon: '💬', title: 'Messages',
     subtitle: 'Team Chat',
     desc: 'Direct messages between you, your team and the admin — in real time.',
     bg: 'linear-gradient(145deg,#0f2230,#050d12)', orbColor: '#38bdf8', accentColor: '#bae6fd',
@@ -92,7 +100,7 @@ const MODULES = [
     type: 'active', path: '/messages',
   },
   {
-    key: 'settings', num: '11', icon: '⚙️', title: 'Settings',
+    key: 'settings', num: '12', icon: '⚙️', title: 'Settings',
     subtitle: 'Account & Management',
     desc: 'View your account, change your password and manage system users.',
     bg: 'linear-gradient(145deg,#2a2a2a,#0d0d0d)', orbColor: '#bdbdbd', accentColor: '#e5e5e5',

@@ -17,6 +17,7 @@ const PERM_MODULES = [
   { key: 'content', label: 'Content Calendar' },
   { key: 'analytics', label: 'Analytics & KPIs' },
   { key: 'expenses', label: 'Company Expenses' },
+  { key: 'bills', label: 'Invoices (Renewals)' },
   { key: 'calendar', label: 'Calendar' },
   { key: 'team_tasks', label: 'Team Tasks' },
   { key: 'video_studio', label: 'Video Studio' },

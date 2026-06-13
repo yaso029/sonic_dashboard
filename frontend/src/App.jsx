@@ -42,6 +42,7 @@ import MessagesPage from './pages/messages/MessagesPage';
 import ContentCalendarPage from './pages/content/ContentCalendarPage';
 import AnalyticsPage from './pages/analytics/AnalyticsPage';
 import ExpensesPage from './pages/expenses/ExpensesPage';
+import BillsInvoicesPage from './pages/bills/InvoicesPage';
 
 function PrivateRoute({ children, roles }) {
   const { user } = useAuth();
@@ -148,6 +149,9 @@ export default function App() {
 
       {/* Company Expenses — internal invoices (USD / SYP) */}
       <Route path="/expenses" element={<PrivateRoute><ExpensesPage /></PrivateRoute>} />
+
+      {/* Invoices — paid services with renewal reminders */}
+      <Route path="/invoices" element={<PrivateRoute><BillsInvoicesPage /></PrivateRoute>} />
 
       <Route path="/settings" element={<PrivateRoute><SettingsPage /></PrivateRoute>} />
 
